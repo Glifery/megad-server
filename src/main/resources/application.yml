@@ -1,0 +1,19 @@
+spreadsheet:
+  url: https://docs.google.com/spreadsheets/d/1TZ8a0feF8jdzMBiSrwdGJdtpIfKz3vUwDmDhnUCYsuI
+  tab: 2
+  megad_config_column: J
+
+megad:
+  common:
+    password: sec
+  controllers:
+    megad1:
+      host: http://192.168.0.141
+      name: Megad1
+      spreadsheet:
+        start_row_for_p0: 8
+    megad2:
+      host: http://192.168.0.142
+      name: Megad2
+      spreadsheet:
+        start_row_for_p0: 56
