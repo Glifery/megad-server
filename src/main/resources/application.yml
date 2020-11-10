@@ -1,5 +1,8 @@
 spreadsheet:
-  url: https://docs.google.com/spreadsheets/d/1TZ8a0feF8jdzMBiSrwdGJdtpIfKz3vUwDmDhnUCYsuI
+  credentials_json: "/google-sheets-client-secret.json"
+  tokens_folder: "google-tokens"
+  spreadsheet_id: "1TZ8a0feF8jdzMBiSrwdGJdtpIfKz3vUwDmDhnUCYsuI"
+  spreadsheet_tab: "Подключение"
   tab: 2
   megad_config_column: J
 
@@ -11,9 +14,9 @@ megad:
       host: http://192.168.0.141
       name: Megad1
       spreadsheet:
-        start_row_for_p0: 8
+        first_row_for_p0: 8
     megad2:
       host: http://192.168.0.142
       name: Megad2
       spreadsheet:
-        start_row_for_p0: 56
+        first_row_for_p0: 42

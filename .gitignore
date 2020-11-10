@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/src/main/resources/google-sheets-client-secret.json
+/google-tokens

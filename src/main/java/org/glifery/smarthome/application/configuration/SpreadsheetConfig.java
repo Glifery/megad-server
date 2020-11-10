@@ -8,7 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "spreadsheet")
 public class SpreadsheetConfig {
-    private String url;
+    private String credentialsJson;
+    private String tokensFolder;
+    private String spreadsheetId;
+    private String spreadsheetTab;
     private String tab;
     private String megadConfigColumn;
 }

@@ -27,6 +27,6 @@ public class MegadConfig {
 
     @Data
     public static class SpreadsheetConfig {
-        private Integer startRowForP0;
+        private Integer firstRowForP0;
     }
 }

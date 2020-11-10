@@ -1,6 +1,7 @@
 package org.glifery.smarthome.adapter.controller;
 
 import lombok.AllArgsConstructor;
+import org.glifery.smarthome.adapter.google.Spreadsheet;
 import org.glifery.smarthome.application.service.Megad;
 import org.glifery.smarthome.domain.model.megad.MegadId;
 import org.glifery.smarthome.domain.model.megad.Operation;
@@ -13,9 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class TestController {
     private Megad megad;
+    private Spreadsheet spreadsheet;
 
     @GetMapping("/test")
     public String test() {
+        try {
+            spreadsheet.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         String str = "d";
 
         MegadId megadId = new MegadId("megad2");
