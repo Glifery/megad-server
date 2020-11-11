@@ -6,9 +6,8 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import org.glifery.smarthome.adapter.google.model.MegadRange;
 import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.configuration.SpreadsheetConfig;
-import org.glifery.smarthome.domain.model.megad.MegadId;
-import org.glifery.smarthome.domain.model.megad.Operation;
-import org.glifery.smarthome.domain.model.megad.PortAction;
+import org.glifery.smarthome.application.util.ActionsListConverter;
+import org.glifery.smarthome.domain.model.megad.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -34,8 +33,10 @@ public class Spreadsheet {
     }
 
     public void read() throws IOException {
+        // Collect table ranges for each MegaD. Example: {megad1: Подключение!I8:J35, megad2: Подключение!I42:J69}
         List<MegadRange> megadRanges = megadConfig.getControllers().entrySet().stream().map(this::generateRangeForMegad).collect(Collectors.toList());
 
+        // Collect only table ranges. Example: {Подключение!I8:J35, Подключение!I42:J69}
         List<String> ranges = megadRanges.stream().map(megadRange -> megadRange.getRange()).collect(Collectors.toList());
 
         BatchGetValuesResponse response = sheets.spreadsheets().values()
@@ -43,32 +44,48 @@ public class Spreadsheet {
                 .setRanges(ranges)
                 .execute();
 
-        List<ValueRange> valueRanges = response.getValueRanges();
-
-        IntStream.range(0, valueRanges.size())
-                .mapToObj(index -> generateOperationsForRange(megadRanges.get(index).getMegadId(), valueRanges.get(index)))
+        // For each MegaD create list of PortActionsList. Example: {megad1: [{port 0: action: 1:1}, {port 0: action: 1:1}], megad2: ...}
+        List<List<PortActionsList>> portActionsListsForRanges = IntStream.range(0, response.getValueRanges().size())
+                .mapToObj(index -> generateOperationsForRange(megadRanges.get(index).getMegadId(), response.getValueRanges().get(index)))
                 .collect(Collectors.toList());
+
+        // Flattern 'list of list' into 'list'
+        List<PortActionsList> portActionsLists = portActionsListsForRanges.stream().flatMap(List::stream).collect(Collectors.toList());
+        portActionsLists = portActionsLists;
     }
 
     private MegadRange generateRangeForMegad(Map.Entry<String, MegadConfig.ControllerConfig> entry) {
         MegadId megadId = new MegadId(entry.getKey());
 
-        String columnLetter = spreadsheetConfig.getMegadConfigColumn();
+        String firstColumnLetter = spreadsheetConfig.getMegadPortColumn();
+        String lastColumnLetter = spreadsheetConfig.getMegadActionColumn();
         String tabName = spreadsheetConfig.getSpreadsheetTab();
 
         Integer firstRow = entry.getValue().getSpreadsheet().getFirstRowForP0();
         Integer lastRow = firstRow + (MEGAD_ROWS_AMOUNT - 1);
 
-        String range = String.format("%s!%s%s:%s%s", tabName, columnLetter, firstRow, columnLetter, lastRow);
+        String range = String.format("%s!%s%s:%s%s", tabName, firstColumnLetter, firstRow, lastColumnLetter, lastRow);
 
         return new MegadRange(megadId, range);
     }
 
-    private List<Operation> generateOperationsForRange(MegadId megadId, ValueRange valueRange) {
-        return valueRange.getValues().get(0).stream().map(action -> generateOperation(megadId, action.toString())).collect(Collectors.toList());
+    private List<PortActionsList> generateOperationsForRange(MegadId megadId, ValueRange valueRange) {
+        return valueRange.getValues().stream()
+                .map(row -> {
+                    if (row.size() == 2) {
+                        return generateOperation(megadId, row.get(0).toString(), row.get(1).toString());
+                    }
+
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    private Operation generateOperation(MegadId megadId, String action) {
-        return Operation.create(PortAction.create(megadId.toString(), 1, PortAction.SWITCH));
+    private PortActionsList generateOperation(MegadId megadId, String initialPortString, String actionString) {
+        Port initialPort = new Port(megadId, Integer.parseInt(initialPortString));
+        ActionsList actionsList = ActionsListConverter.fromActionString(megadId, actionString);
+
+        return new PortActionsList(initialPort, actionsList);
     }
 }

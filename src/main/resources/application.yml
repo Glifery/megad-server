@@ -4,7 +4,8 @@ spreadsheet:
   spreadsheet_id: "1TZ8a0feF8jdzMBiSrwdGJdtpIfKz3vUwDmDhnUCYsuI"
   spreadsheet_tab: "Подключение"
   tab: 2
-  megad_config_column: J
+  megad_port_column: I
+  megad_action_column: J
 
 megad:
   common:

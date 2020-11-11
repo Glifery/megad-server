@@ -13,5 +13,6 @@ public class SpreadsheetConfig {
     private String spreadsheetId;
     private String spreadsheetTab;
     private String tab;
-    private String megadConfigColumn;
+    private String megadPortColumn;
+    private String megadActionColumn;
 }

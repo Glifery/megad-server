@@ -15,7 +15,7 @@ public class Port {
     private final MegadId megadId;
 
     @NonNull
-    @Range(min = 7, max = 13)
+    @Range(min = 0, max = 28)
     private final Integer number;
 
     public String toString() {

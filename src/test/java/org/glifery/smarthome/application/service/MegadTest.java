@@ -2,8 +2,8 @@ package org.glifery.smarthome.application.service;
 
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.domain.model.megad.MegadId;
-import org.glifery.smarthome.domain.model.megad.Operation;
-import org.glifery.smarthome.domain.model.megad.PortAction;
+import org.glifery.smarthome.domain.model.megad.ActionsList;
+import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class MegadTest {
     private ArgumentCaptor<MegadId> megadIdArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<Operation> operationArgumentCaptor;
+    private ArgumentCaptor<ActionsList> operationArgumentCaptor;
 
     @Before
     public void setup() {
@@ -33,16 +33,16 @@ public class MegadTest {
 
     @Test
     public void testMultipleActionsDifferentMegadId() throws IOException {
-        Operation operationInput = Operation.create(
-                PortAction.create("megad1", 7, PortAction.ON),
-                PortAction.create("megad1", 8, PortAction.OFF),
-                PortAction.create("megad2", 9, PortAction.SWITCH)
+        ActionsList actionsListInput = ActionsList.create(
+                SingleAction.create("megad1", 7, SingleAction.ON),
+                SingleAction.create("megad1", 8, SingleAction.OFF),
+                SingleAction.create("megad2", 9, SingleAction.SWITCH)
         );
 
-        megad.sendCommand(operationInput);
+        megad.sendCommand(actionsListInput);
 
 //        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(megadIdArgumentCaptor.capture(), operationArgumentCaptor.capture());
-        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(Mockito.any(MegadId.class), Mockito.any(Operation.class));
+        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
 
 //        List<MegadId> megadIds = megadIdArgumentCaptor.getAllValues();
 //        List<Operation> operations = operationArgumentCaptor.getAllValues();
@@ -61,14 +61,14 @@ public class MegadTest {
 
     @Test
     public void testOneMegadId() throws IOException {
-        Operation operationInput = Operation.create(
-                PortAction.create("megad1", 7, PortAction.ON),
-                PortAction.create("megad1", 8, PortAction.OFF),
-                PortAction.create("megad1", 9, PortAction.SWITCH)
+        ActionsList actionsListInput = ActionsList.create(
+                SingleAction.create("megad1", 7, SingleAction.ON),
+                SingleAction.create("megad1", 8, SingleAction.OFF),
+                SingleAction.create("megad1", 9, SingleAction.SWITCH)
         );
 
-        megad.sendCommand(operationInput);
+        megad.sendCommand(actionsListInput);
 
-        Mockito.verify(megadGateway, Mockito.times(1)).sendCommand(Mockito.any(MegadId.class), Mockito.any(Operation.class));
+        Mockito.verify(megadGateway, Mockito.times(1)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
     }
 }
