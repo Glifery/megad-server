@@ -10,9 +10,6 @@ import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
 public class TestController {
@@ -22,7 +19,7 @@ public class TestController {
     @GetMapping("/test")
     public String test() {
         try {
-            spreadsheet.read();
+            spreadsheet.readPortActionsLists();
         } catch (Exception e) {
             e.printStackTrace();
         }

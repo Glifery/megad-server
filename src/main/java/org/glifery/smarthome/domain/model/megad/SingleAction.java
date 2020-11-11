@@ -29,6 +29,6 @@ public class SingleAction {
     }
 
     public String toString() {
-        return String.format("%s:%s", port, action);
+        return String.format("%s:%s", port.getNumber(), action);
     }
 }

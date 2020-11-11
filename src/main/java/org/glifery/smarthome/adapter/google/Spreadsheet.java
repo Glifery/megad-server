@@ -6,6 +6,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import org.glifery.smarthome.adapter.google.model.MegadRange;
 import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.configuration.SpreadsheetConfig;
+import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
 import org.glifery.smarthome.application.util.ActionsListConverter;
 import org.glifery.smarthome.domain.model.megad.*;
 import org.springframework.stereotype.Component;
@@ -22,17 +23,21 @@ public class Spreadsheet {
 
     private final SpreadsheetConfig spreadsheetConfig;
     private final MegadConfig megadConfig;
+    private final PortActionsRepositoryInterface portActionsRepository;
     private final Sheets sheets;
 
-    public Spreadsheet(SpreadsheetConfig spreadsheetConfig, MegadConfig megadConfig) throws IOException, GeneralSecurityException {
+    public Spreadsheet(SpreadsheetConfig spreadsheetConfig, MegadConfig megadConfig, PortActionsRepositoryInterface portActionsRepository) throws IOException, GeneralSecurityException {
         this.spreadsheetConfig = spreadsheetConfig;
         this.megadConfig = megadConfig;
+        this.portActionsRepository = portActionsRepository;
 
-        sheets = SheetsServiceUtil.getSheetsService(spreadsheetConfig);
-        read();
+        this.sheets = SheetsServiceUtil.getSheetsService(spreadsheetConfig);
+
+        List<PortActionsList> portActionsLists = readPortActionsLists();
+        portActionsRepository.store(portActionsLists);
     }
 
-    public void read() throws IOException {
+    public List<PortActionsList> readPortActionsLists() throws IOException {
         // Collect table ranges for each MegaD. Example: {megad1: Подключение!I8:J35, megad2: Подключение!I42:J69}
         List<MegadRange> megadRanges = megadConfig.getControllers().entrySet().stream().map(this::generateRangeForMegad).collect(Collectors.toList());
 
@@ -51,7 +56,8 @@ public class Spreadsheet {
 
         // Flattern 'list of list' into 'list'
         List<PortActionsList> portActionsLists = portActionsListsForRanges.stream().flatMap(List::stream).collect(Collectors.toList());
-        portActionsLists = portActionsLists;
+
+        return portActionsLists;
     }
 
     private MegadRange generateRangeForMegad(Map.Entry<String, MegadConfig.ControllerConfig> entry) {
