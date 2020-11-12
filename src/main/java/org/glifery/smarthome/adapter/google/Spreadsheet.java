@@ -33,8 +33,8 @@ public class Spreadsheet {
 
         this.sheets = SheetsServiceUtil.getSheetsService(spreadsheetConfig);
 
-//        List<PortActionsList> portActionsLists = readPortActionsLists();
-//        portActionsRepository.store(portActionsLists);
+        List<PortActionsList> portActionsLists = readPortActionsLists();
+        portActionsRepository.store(portActionsLists);
     }
 
     public List<PortActionsList> readPortActionsLists() throws IOException {

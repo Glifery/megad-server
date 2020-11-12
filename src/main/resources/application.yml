@@ -1,3 +1,11 @@
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: INFO
+
 spreadsheet:
   credentials_json: "/google-sheets-client-secret.json"
   tokens_folder: "google-tokens"
