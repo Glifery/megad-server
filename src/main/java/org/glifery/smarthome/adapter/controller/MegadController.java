@@ -39,27 +39,31 @@ public class MegadController {
     ) {
         IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, clickType, clickCounter, mode, portStatus);
 
-        log.warn(String.format("Incoming request: %s", incomingRequest));
+        log.warn(String.format("HTTP request: %s", incomingRequest));
 
-        if ((incomingRequest instanceof ActionIncomingRequest) && (((ActionIncomingRequest) incomingRequest).getMode() == ActionIncomingRequest.Mode.PRESS)) {
+        if (incomingRequest instanceof ActionIncomingRequest) {
 
-            if (applicationConfig.isDirectMegadResponse()) {
+            if (applicationConfig.isDirectMegadResponse() && ifActionIsPress((ActionIncomingRequest) incomingRequest)) {
                 return generateDirectResponse((ActionIncomingRequest) incomingRequest);
             }
 
             return publishRequest((ActionIncomingRequest) incomingRequest);
         }
 
-        log.warn(String.format("Incoming request: %s. Output: empty", incomingRequest));
+        log.warn(String.format("HTTP response for %s: empty", incomingRequest));
 
         return empty;
+    }
+
+    private boolean ifActionIsPress(ActionIncomingRequest incomingRequest) {
+        return (incomingRequest.getMode() == ActionIncomingRequest.Mode.PRESS);
     }
 
     private String generateDirectResponse(ActionIncomingRequest incomingRequest) {
         ActionsList actionsList = portActionsRepository.getActionsList(incomingRequest.getPort());
 
         if (Objects.nonNull(actionsList)) {
-            log.warn(String.format("Incoming request: %s. Output: %s", incomingRequest, actionsList));
+            log.warn(String.format("HTTP response for %s: %s", incomingRequest, actionsList));
 
             return actionsList.toString();
         }
@@ -68,9 +72,9 @@ public class MegadController {
     }
 
     private String publishRequest(ActionIncomingRequest incomingRequest) {
-        publisher.publishEvent(new ActionIncomingRequestEvent(incomingRequest));
+        publisher.publishEvent(new ActionIncomingRequestEvent(incomingRequest.toString(), incomingRequest));
 
-        log.warn(String.format("Publish incoming request: %s. Output: empty", incomingRequest));
+        log.warn(String.format("Publish %s event. HTTP response: empty", incomingRequest));
 
         return empty;
     }

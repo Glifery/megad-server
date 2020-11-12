@@ -7,7 +7,8 @@ logging:
             CommonsRequestLoggingFilter: INFO
 
 application:
-  direct_megad_response: true
+  direct_megad_response: false
+  double_click_milliseconds: 1000
 
 spreadsheet:
   credentials_json: "/google-sheets-client-secret.json"

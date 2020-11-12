@@ -25,6 +25,6 @@ public class ActionIncomingRequest extends IncomingRequest {
     private final ClickType clickType;
 
     public String toString() {
-        return String.format("Port %s acts %s (%s click)", port, mode, clickType);
+        return String.format("%s.%s.%s", port, mode, clickType);
     }
 }

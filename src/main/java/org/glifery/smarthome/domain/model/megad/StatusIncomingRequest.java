@@ -18,6 +18,6 @@ public class StatusIncomingRequest extends IncomingRequest {
     }
 
     public String toString() {
-        return String.format("Port %s in %s status", port, status);
+        return String.format("%s.%s", port, status);
     }
 }

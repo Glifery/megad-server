@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.glifery.smarthome.domain.model.megad.ActionIncomingRequest;
 
-import java.time.LocalDateTime;
-
 @Getter
-@RequiredArgsConstructor
-public class ActionIncomingRequestEvent {
-    private final LocalDateTime dateTime = LocalDateTime.now();
+public class ActionIncomingRequestEvent extends AbstractEvent {
     private final ActionIncomingRequest request;
+
+    public ActionIncomingRequestEvent(String name, ActionIncomingRequest request) {
+        super(name);
+        this.request = request;
+    }
 }

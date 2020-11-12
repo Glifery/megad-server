@@ -9,4 +9,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "application")
 public class ApplicationConfig {
     private boolean directMegadResponse;
+    private long doubleClickMilliseconds;
 }
