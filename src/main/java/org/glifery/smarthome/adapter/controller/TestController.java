@@ -3,18 +3,14 @@ package org.glifery.smarthome.adapter.controller;
 import lombok.AllArgsConstructor;
 import org.glifery.smarthome.adapter.google.Spreadsheet;
 import org.glifery.smarthome.application.TestService;
-import org.glifery.smarthome.application.service.Megad;
-import org.glifery.smarthome.domain.model.megad.MegadId;
-import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.Port;
-import org.glifery.smarthome.domain.model.megad.SingleAction;
+import org.glifery.smarthome.application.service.MegadService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
 public class TestController {
-    private Megad megad;
+    private MegadService megadService;
     private Spreadsheet spreadsheet;
     private TestService testService;
 

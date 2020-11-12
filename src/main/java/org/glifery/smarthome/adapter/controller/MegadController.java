@@ -17,6 +17,8 @@ import java.util.Objects;
 @RestController
 @AllArgsConstructor
 public class MegadController {
+    private static String empty = "";
+
     private final ApplicationConfig applicationConfig;
     private final PortActionsRepositoryInterface portActionsRepository;
     private final ApplicationEventPublisher publisher;
@@ -50,7 +52,7 @@ public class MegadController {
 
         log.warn(String.format("Incoming request: %s. Output: empty", incomingRequest));
 
-        return "";
+        return empty;
     }
 
     private String generateDirectResponse(ActionIncomingRequest incomingRequest) {
@@ -62,7 +64,7 @@ public class MegadController {
             return actionsList.toString();
         }
 
-        return "";
+        return empty;
     }
 
     private String publishRequest(ActionIncomingRequest incomingRequest) {
@@ -70,6 +72,6 @@ public class MegadController {
 
         log.warn(String.format("Publish incoming request: %s. Output: empty", incomingRequest));
 
-        return "";
+        return empty;
     }
 }

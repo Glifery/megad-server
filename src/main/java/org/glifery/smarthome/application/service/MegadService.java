@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class Megad {
+public class MegadService {
     private final MegadGatewayInterface megadGateway;
 
     public void sendCommand(ActionsList actionsList) {

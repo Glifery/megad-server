@@ -15,9 +15,9 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 @RunWith(JUnit4.class)
-public class MegadTest {
+public class MegadServiceTest {
     private MegadGatewayInterface megadGateway;
-    private Megad megad;
+    private MegadService megadService;
 
     @Captor
     private ArgumentCaptor<MegadId> megadIdArgumentCaptor;
@@ -28,7 +28,7 @@ public class MegadTest {
     @Before
     public void setup() {
         megadGateway = Mockito.mock(MegadGatewayInterface.class);
-        megad = new Megad(megadGateway);
+        megadService = new MegadService(megadGateway);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class MegadTest {
                 SingleAction.create("megad2", 9, SingleAction.SWITCH)
         );
 
-        megad.sendCommand(actionsListInput);
+        megadService.sendCommand(actionsListInput);
 
 //        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(megadIdArgumentCaptor.capture(), operationArgumentCaptor.capture());
         Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
@@ -67,7 +67,7 @@ public class MegadTest {
                 SingleAction.create("megad1", 9, SingleAction.SWITCH)
         );
 
-        megad.sendCommand(actionsListInput);
+        megadService.sendCommand(actionsListInput);
 
         Mockito.verify(megadGateway, Mockito.times(1)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
     }
