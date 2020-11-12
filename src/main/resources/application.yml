@@ -6,6 +6,9 @@ logging:
           filter:
             CommonsRequestLoggingFilter: INFO
 
+application:
+  direct_megad_response: true
+
 spreadsheet:
   credentials_json: "/google-sheets-client-secret.json"
   tokens_folder: "google-tokens"
