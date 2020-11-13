@@ -34,7 +34,7 @@ public class DefaultPortActionListener {
         ActionsList actionsList = portActionsRepository.getActionsList(Port.create(eventNameParts.get(0), Integer.parseInt(eventNameParts.get(1))));
 
         if (Objects.nonNull(actionsList)) {
-            log.warn(String.format("Execute actions: %s", actionsList.getSingleActions()));
+            log.info(String.format("Execute actions: %s", actionsList.getSingleActions()));
             megadService.sendCommand(actionsList);
         }
     }

@@ -10,4 +10,8 @@ import java.time.LocalDateTime;
 public abstract class AbstractEvent {
     protected final String name;
     protected LocalDateTime dateTime = LocalDateTime.now();
+
+    public boolean wasBeforeThan(LocalDateTime compareDateTime) {
+        return dateTime.isBefore(compareDateTime);
+    }
 }

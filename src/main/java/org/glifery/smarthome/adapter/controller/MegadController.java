@@ -39,7 +39,7 @@ public class MegadController {
     ) {
         IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, clickType, clickCounter, mode, portStatus);
 
-        log.warn(String.format("HTTP request: %s", incomingRequest));
+        log.info(String.format("HTTP request: %s", incomingRequest));
 
         if (incomingRequest instanceof ActionIncomingRequest) {
 
@@ -50,7 +50,7 @@ public class MegadController {
             return publishRequest((ActionIncomingRequest) incomingRequest);
         }
 
-        log.warn(String.format("HTTP response for %s: empty", incomingRequest));
+        log.info(String.format("HTTP response for %s: empty", incomingRequest));
 
         return empty;
     }
@@ -63,7 +63,7 @@ public class MegadController {
         ActionsList actionsList = portActionsRepository.getActionsList(incomingRequest.getPort());
 
         if (Objects.nonNull(actionsList)) {
-            log.warn(String.format("HTTP response for %s: %s", incomingRequest, actionsList));
+            log.info(String.format("HTTP response for %s: %s", incomingRequest, actionsList));
 
             return actionsList.toString();
         }
@@ -74,7 +74,7 @@ public class MegadController {
     private String publishRequest(ActionIncomingRequest incomingRequest) {
         publisher.publishEvent(new ActionIncomingRequestEvent(incomingRequest.toString(), incomingRequest));
 
-        log.warn(String.format("Publish %s event. HTTP response: empty", incomingRequest));
+        log.info(String.format("Publish %s event. HTTP response: empty", incomingRequest));
 
         return empty;
     }

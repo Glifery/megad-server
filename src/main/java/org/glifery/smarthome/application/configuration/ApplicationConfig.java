@@ -10,4 +10,5 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
     private boolean directMegadResponse;
     private long doubleClickMilliseconds;
+    private long holdClickMilliseconds;
 }

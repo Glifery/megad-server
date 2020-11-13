@@ -1,6 +1,10 @@
 logging:
   level:
     org:
+      glifery:
+        smarthome:
+          adapter: WARN
+          application: DEBUG
       springframework:
         web:
           filter:
@@ -9,6 +13,7 @@ logging:
 application:
   direct_megad_response: false
   double_click_milliseconds: 1000
+  hold_click_milliseconds: 1000
 
 spreadsheet:
   credentials_json: "/google-sheets-client-secret.json"
