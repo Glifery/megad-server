@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DefaultPortActionListener {
+public class DefaultPortActionListener extends AbstractListener {
     private final PortActionsRepository portActionsRepository;
     private final MegadService megadService;
 
@@ -28,7 +28,7 @@ public class DefaultPortActionListener {
             return;
         }
 
-        log.info(String.format("Handle %s event", event.getName()));
+        handleLog(event);
         List<String> eventNameParts = Arrays.stream(event.getName().split("\\.")).collect(Collectors.toList());
 
         ActionsList actionsList = portActionsRepository.getActionsList(Port.create(eventNameParts.get(0), Integer.parseInt(eventNameParts.get(1))));

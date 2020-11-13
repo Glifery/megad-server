@@ -4,7 +4,9 @@ logging:
       glifery:
         smarthome:
           adapter: WARN
-          application: DEBUG
+          application:
+            event:
+              listener: WARN
       springframework:
         web:
           filter:
