@@ -10,13 +10,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /*
 +CLICK - any click (PRESS)
 +CLICK.FIRST - first click with any clicks after (PRESS if no other PRESS before)
-CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far)
+CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far and before)
 +CLICK.DOUBLE - double click (PRESS with PRESS near before)
 CLICK.HOLD - hold after click (near after PRESS if no RELEASE so far)
  */
@@ -39,7 +40,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
             publishClickEvent(ClickEvent.Type.CLICK, event);
 
             AbstractEvent latestEvent = eventRepository.findLatestByName(event.getRequest().toString());
-            LocalDateTime maxTimeForDoubleClick = event.getDateTime().minusNanos(config.getDoubleClickMilliseconds() * 1000000l);
+            LocalDateTime maxTimeForDoubleClick = event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds()));
 
             if (Objects.isNull(latestEvent) || latestEvent.wasBeforeThan(maxTimeForDoubleClick)) {
                 publishClickEvent(ClickEvent.Type.CLICK_FIRST, event);
@@ -57,10 +58,12 @@ public class IncomingRequestListener extends AbstractPublishingListener {
             return;
         }
 
-        Thread.sleep(config.getHoldClickMilliseconds() / 2);
+        Duration delay = Duration.ofMillis(config.getHoldClickMilliseconds()).dividedBy(2);
+
+        Thread.sleep(delay.toMillis());
         LocalDateTime currentTime = LocalDateTime.now();
 
-        handleLog(event, config.getHoldClickMilliseconds() / 2 / 1000);
+        handleLog(event, delay);
 
         String latestPressEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.PRESS, ActionIncomingRequest.ClickType.SINGLE);
         AbstractEvent latestPressEvent = eventRepository.findLatestByName(latestPressEventName);
@@ -76,10 +79,12 @@ public class IncomingRequestListener extends AbstractPublishingListener {
             return;
         }
 
-        Thread.sleep(config.getHoldClickMilliseconds());
+        Duration delay = Duration.ofMillis(config.getHoldClickMilliseconds());
+
+        Thread.sleep(delay.toMillis());
         LocalDateTime currentTime = LocalDateTime.now();
 
-        handleLog(event, config.getHoldClickMilliseconds() / 1000);
+        handleLog(event, delay);
 
         String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
         AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
