@@ -11,6 +11,7 @@ public class ClickEvent extends AbstractEvent {
         CLICK_FIRST,
         CLICK_SINGLE,
         CLICK_DOUBLE,
+        CLICK_TRIPLE,
         CLICK_HOLD
     }
 
