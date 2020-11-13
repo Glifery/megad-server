@@ -13,9 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /*
 +CLICK - any click (PRESS)
@@ -34,26 +32,22 @@ public class IncomingRequestListener {
 
     @EventListener
     public void convertActionToClick(ActionIncomingRequestEvent event) {
-        if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {
-            return;
-        }
+        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.PRESS) {
+            log.info(String.format("Handle %s event", event.getRequest()));
 
-        log.info(String.format("Handle %s event", event.getRequest()));
+            publishClickEvent(event);
 
-        publishClickEvent(event);
+            AbstractEvent latestEvent = eventRepository.findLatestByName(event.getRequest().toString());
+            LocalDateTime maxTimeForDoubleClick = event.getDateTime().minusNanos(config.getDoubleClickMilliseconds() * 1000000l);
 
-        AbstractEvent latestEvent = eventRepository.findLatestByName(event.getRequest().toString());
-        LocalDateTime maxTimeForDoubleClick = event.getDateTime().minusNanos(config.getDoubleClickMilliseconds() * 1000000l);
-
-        if (Objects.isNull(latestEvent) || latestEvent.wasBeforeThan(maxTimeForDoubleClick)) {
-            publishClickFirstEvent(event);
-        } else {
-            publishClickDoubleEvent(event);
+            if (Objects.isNull(latestEvent) || latestEvent.wasBeforeThan(maxTimeForDoubleClick)) {
+                publishClickFirstEvent(event);
+            } else {
+                publishClickDoubleEvent(event);
+            }
         }
 
         eventRepository.add(event);
-
-        return;
     }
 
     @EventListener
@@ -67,7 +61,7 @@ public class IncomingRequestListener {
         log.info(String.format("Handle %s event with delay %ss", event.getRequest(), config.getHoldClickMilliseconds() / 1000));
 
         if (event.getRequest().getMode() == ActionIncomingRequest.Mode.PRESS) {
-            String latestReleaseEventName = String.format("%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE);
+            String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
             AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
 
             if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBeforeThan(event.getDateTime())) {
