@@ -32,7 +32,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     }
 
     @EventListener
-    public void convertActionToClick(ActionIncomingRequestEvent event) {
+    public void checkBaseClicks(ActionIncomingRequestEvent event) {
         if (event.getRequest().getMode() == ActionIncomingRequest.Mode.PRESS) {
             handleLog(event);
 
@@ -52,8 +52,27 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     }
 
     @EventListener
-    public void convertActionToClickWithDelay(ActionIncomingRequestEvent event) throws InterruptedException {
-        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.HOLD) {
+    public void checkSingleClick(ActionIncomingRequestEvent event) throws InterruptedException {
+        if (event.getRequest().getMode() != ActionIncomingRequest.Mode.RELEASE) {
+            return;
+        }
+
+        Thread.sleep(config.getHoldClickMilliseconds() / 2);
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        handleLog(event, config.getHoldClickMilliseconds() / 2 / 1000);
+
+        String latestPressEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.PRESS, ActionIncomingRequest.ClickType.SINGLE);
+        AbstractEvent latestPressEvent = eventRepository.findLatestByName(latestPressEventName);
+
+        if (Objects.isNull(latestPressEvent) || latestPressEvent.wasBeforeThan(event.getDateTime())) {
+            publishClickEvent(ClickEvent.Type.CLICK_SINGLE, event, currentTime);
+        }
+    }
+
+    @EventListener
+    public void checkHoldClick(ActionIncomingRequestEvent event) throws InterruptedException {
+        if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {
             return;
         }
 
@@ -62,15 +81,11 @@ public class IncomingRequestListener extends AbstractPublishingListener {
 
         handleLog(event, config.getHoldClickMilliseconds() / 1000);
 
-        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.PRESS) {
-            String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
-            AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
+        String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
+        AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
 
-            if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBeforeThan(event.getDateTime())) {
-                publishClickEvent(ClickEvent.Type.CLICK_HOLD, event, currentTime);
-            }
-
-            return;
+        if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBeforeThan(event.getDateTime())) {
+            publishClickEvent(ClickEvent.Type.CLICK_HOLD, event, currentTime);
         }
     }
 
