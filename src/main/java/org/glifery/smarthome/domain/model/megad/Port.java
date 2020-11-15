@@ -27,6 +27,6 @@ public class Port {
     }
 
     public String toString() {
-        return String.format("%s.%s", megadId, number);
+        return number.toString();
     }
 }

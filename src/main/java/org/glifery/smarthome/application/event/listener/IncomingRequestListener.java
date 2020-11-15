@@ -105,7 +105,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     }
 
     private void publishClickEvent(ClickEvent.Type clickType, ActionIncomingRequestEvent parentEvent, LocalDateTime dateTime) {
-        String eventName = String.format("%s.%s", parentEvent.getRequest().getPort(), clickType);
+        String eventName = String.format("%s.%s.%s", parentEvent.getRequest().getPort().getMegadId(), parentEvent.getRequest().getPort(), clickType);
 
         publishAndLog(new ClickEvent(eventName, dateTime));
     }
