@@ -13,7 +13,7 @@ public abstract class AbstractEvent {
     protected final LocalDateTime dateTime;
     protected final Duration ttl;
 
-    public boolean wasBeforeThan(LocalDateTime compareDateTime) {
+    public boolean wasBefore(LocalDateTime compareDateTime) {
         return dateTime.isBefore(compareDateTime);
     }
 }

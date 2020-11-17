@@ -12,7 +12,8 @@ public class ClickEvent extends AbstractEvent {
         CLICK_SINGLE,
         CLICK_DOUBLE,
         CLICK_TRIPLE,
-        CLICK_HOLD
+        CLICK_HOLD,
+        UNCLICK
     }
 
     public ClickEvent(String name, LocalDateTime dateTime) {

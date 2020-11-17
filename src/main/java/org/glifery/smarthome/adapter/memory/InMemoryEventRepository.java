@@ -50,7 +50,7 @@ public class InMemoryEventRepository implements EventRepositoryInterface {
             while (iterator.hasNext()) {
                 AbstractEvent event = iterator.next();
 
-                if (event.wasBeforeThan(LocalDateTime.now().minus(event.getTtl()))) {
+                if (event.wasBefore(LocalDateTime.now().minus(event.getTtl()))) {
                     iterator.remove();
                 } else {
                     break;

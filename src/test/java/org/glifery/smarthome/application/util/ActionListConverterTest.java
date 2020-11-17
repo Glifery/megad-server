@@ -20,7 +20,7 @@ public class ActionListConverterTest {
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(1);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().toString()).isEqualTo("7");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("7:0");
     }
 
@@ -32,13 +32,13 @@ public class ActionListConverterTest {
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(3);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().toString()).isEqualTo("7");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("7:1");
         Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().toString()).isEqualTo("8");
+        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getNumber()).isEqualTo(8);
         Assertions.assertThat(actionsList.getSingleActions().get(1).toString()).isEqualTo("8:2");
         Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().toString()).isEqualTo("9");
+        Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().getNumber()).isEqualTo(9);
         Assertions.assertThat(actionsList.getSingleActions().get(2).toString()).isEqualTo("9:3");
     }
 
@@ -50,10 +50,10 @@ public class ActionListConverterTest {
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(2);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().toString()).isEqualTo("7");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("7:1");
         Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegadId().toString()).isEqualTo("megad1");
-        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().toString()).isEqualTo("8");
+        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getNumber()).isEqualTo(8);
         Assertions.assertThat(actionsList.getSingleActions().get(1).toString()).isEqualTo("8:2");
     }
 

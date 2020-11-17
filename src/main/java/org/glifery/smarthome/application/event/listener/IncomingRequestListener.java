@@ -1,5 +1,6 @@
 package org.glifery.smarthome.application.event.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
 import org.glifery.smarthome.application.port.EventRepositoryInterface;
 import org.glifery.smarthome.domain.event.AbstractEvent;
@@ -18,11 +19,13 @@ import java.util.Objects;
 /*
 +CLICK - any click (PRESS)
 +CLICK.FIRST - first click with any clicks after (PRESS if no other PRESS before)
-+CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far and before)
+CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far and before)
 +CLICK.DOUBLE - double click (PRESS with PRESS near before)
-CLICK.TRIPLE - triple click (PRESS with 2 PRESSes near before)
++CLICK.TRIPLE - triple click (PRESS with 2 PRESSes near before)
 +CLICK.HOLD - hold after click (near after PRESS if no RELEASE so far)
++UNCLICK - any unclick (RELEASE)
  */
+@Slf4j
 @Component
 public class IncomingRequestListener extends AbstractPublishingListener {
     private final ApplicationConfig config;
@@ -44,15 +47,19 @@ public class IncomingRequestListener extends AbstractPublishingListener {
             List<AbstractEvent> lastEvents = eventRepository.findByNameDesc(event.getRequest().toString(), 2);
             LocalDateTime maxTimeForDoubleClick = event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds()));
 
-            if (lastEvents.isEmpty() || lastEvents.get(0).wasBeforeThan(maxTimeForDoubleClick)) {
+            if (lastEvents.isEmpty() || lastEvents.get(0).wasBefore(maxTimeForDoubleClick)) {
                 publishClickEvent(ClickEvent.Type.CLICK_FIRST, event);
             } else {
-                if ((lastEvents.size() == 1) || lastEvents.get(1).wasBeforeThan(maxTimeForDoubleClick)) {
+                if ((lastEvents.size() == 1) || lastEvents.get(1).wasBefore(maxTimeForDoubleClick)) {
                     publishClickEvent(ClickEvent.Type.CLICK_DOUBLE, event);
                 } else {
                     publishClickEvent(ClickEvent.Type.CLICK_TRIPLE, event);
                 }
             }
+        }
+
+        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.RELEASE) {
+            publishClickEvent(ClickEvent.Type.UNCLICK, event);
         }
 
         eventRepository.add(event);
@@ -74,7 +81,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         String latestPressEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.PRESS, ActionIncomingRequest.ClickType.SINGLE);
         AbstractEvent latestPressEvent = eventRepository.findLatestByName(latestPressEventName);
 
-        if (Objects.isNull(latestPressEvent) || latestPressEvent.wasBeforeThan(event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds())))) {
+        if (Objects.isNull(latestPressEvent) || latestPressEvent.wasBefore(event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds())))) {
             publishClickEvent(ClickEvent.Type.CLICK_SINGLE, event, currentTime);
         }
     }
@@ -95,7 +102,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
         AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
 
-        if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBeforeThan(event.getDateTime())) {
+        if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBefore(event.getDateTime())) {
             publishClickEvent(ClickEvent.Type.CLICK_HOLD, event, currentTime);
         }
     }
@@ -105,7 +112,7 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     }
 
     private void publishClickEvent(ClickEvent.Type clickType, ActionIncomingRequestEvent parentEvent, LocalDateTime dateTime) {
-        String eventName = String.format("%s.%s.%s", parentEvent.getRequest().getPort().getMegadId(), parentEvent.getRequest().getPort(), clickType);
+        String eventName = String.format("%s.%s", parentEvent.getRequest().getPort(), clickType);
 
         publishAndLog(new ClickEvent(eventName, dateTime));
     }
