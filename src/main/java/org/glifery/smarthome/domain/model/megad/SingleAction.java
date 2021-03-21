@@ -7,17 +7,17 @@ import org.springframework.lang.NonNull;
 
 import javax.validation.Valid;
 
+@Getter
 @RequiredArgsConstructor
 public class SingleAction {
-    public static Integer OFF = 0;
-    public static Integer ON = 1;
-    public static Integer SWITCH = 2;
-    public static Integer SYNC = 3;
-    public static Integer SYNC_REVERSE = 4;
+    public static final Integer OFF = 0;
+    public static final Integer ON = 1;
+    public static final Integer SWITCH = 2;
+    public static final Integer SYNC = 3;
+    public static final Integer SYNC_REVERSE = 4;
 
     @Valid
     @NonNull
-    @Getter
     private final Port port;
 
     @NonNull

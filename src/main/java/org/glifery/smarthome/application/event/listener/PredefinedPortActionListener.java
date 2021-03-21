@@ -3,7 +3,7 @@ package org.glifery.smarthome.application.event.listener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.adapter.memory.PortActionsRepository;
-import org.glifery.smarthome.application.service.MegadService;
+import org.glifery.smarthome.application.service.PortManager;
 import org.glifery.smarthome.domain.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.Port;
@@ -15,12 +15,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * This handler runs predefined (default) MegaD behavior for given port
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DefaultPortActionListener extends AbstractListener {
+public class PredefinedPortActionListener extends AbstractListener {
     private final PortActionsRepository portActionsRepository;
-    private final MegadService megadService;
+    private final PortManager portManager;
 
     @EventListener
     public void handleClickEvent(ClickEvent event) {
@@ -30,12 +33,12 @@ public class DefaultPortActionListener extends AbstractListener {
 
         handleLog(event);
         List<String> eventNameParts = Arrays.stream(event.getName().split("\\.")).collect(Collectors.toList());
+        Port port = Port.create(eventNameParts.get(0), Integer.parseInt(eventNameParts.get(1)));
 
-        ActionsList actionsList = portActionsRepository.getActionsList(Port.create(eventNameParts.get(0), Integer.parseInt(eventNameParts.get(1))));
+        ActionsList predefinedActionsList = portActionsRepository.getActionsList(port);
 
-        if (Objects.nonNull(actionsList)) {
-            log.info(String.format("Execute actions: %s", actionsList.getSingleActions()));
-            megadService.sendCommand(actionsList);
+        if (Objects.nonNull(predefinedActionsList)) {
+            portManager.applyActions(predefinedActionsList, event.getDateTime());
         }
     }
 }

@@ -23,8 +23,10 @@ public class PortActionsRepository implements PortActionsRepositoryInterface {
 
     @Override
     public ActionsList getActionsList(Port port) {
-        return actionsListMap.entrySet().stream().filter(
-                entry -> entry.getKey().equals(port)
-        ).findFirst().map(Map.Entry::getValue).orElse(null);
+        return actionsListMap.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(port))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null);
     }
 }

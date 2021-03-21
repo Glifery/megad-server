@@ -7,5 +7,5 @@ import retrofit2.http.Query;
 
 public interface MegadHttpApi {
     @GET("/{password}/")
-    Call<String> storeProfile(@Path("password") String password, @Query(value = "cmd", encoded = true) String cmd);
+    Call<String> sendCommand(@Path("password") String password, @Query(value = "cmd", encoded = true) String cmd);
 }

@@ -11,4 +11,6 @@ public class ApplicationConfig {
     private boolean directMegadResponse;
     private long doubleClickMilliseconds;
     private long holdClickMilliseconds;
+    private boolean autoupdatePortStateDisabled;
+    private long autoupdatePortStateSeconds;
 }

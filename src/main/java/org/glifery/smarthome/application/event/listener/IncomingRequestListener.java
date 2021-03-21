@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 /*
+This handler converts standard PRESS event to various CLICK events
+
 +CLICK - any click (PRESS)
 +CLICK.FIRST - first click with any clicks after (PRESS if no other PRESS before)
 CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far and before)

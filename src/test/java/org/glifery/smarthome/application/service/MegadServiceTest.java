@@ -1,6 +1,8 @@
 package org.glifery.smarthome.application.service;
 
+import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
+import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.MegadId;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
@@ -27,8 +29,12 @@ public class MegadServiceTest {
 
     @Before
     public void setup() {
+        MegadConfig config = Mockito.mock(MegadConfig.class);
+        PortStateRepositoryInterface portStateRepository = Mockito.mock(PortStateRepositoryInterface.class);
+
         megadGateway = Mockito.mock(MegadGatewayInterface.class);
-        megadService = new MegadService(megadGateway);
+
+        megadService = new MegadService(config, megadGateway, portStateRepository);
     }
 
     @Test
