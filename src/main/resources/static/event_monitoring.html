@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Монитор событий</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <style>
+            .data-table-row-example {
+                display: none;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                var latestEventDate = null;
+
+                setInterval(() => {
+                    $.get(
+                        "/api/monitoring/events",
+                        latestEventDate ? {start_date: latestEventDate} : null
+                    ).done(
+                        (data) => {
+                            data.forEach(event => {
+                                $rowExample = $('.data-table').find('.data-table-row-example').clone();
+
+                                $rowExample.find('.data-table-cell-date_time').text(event.date_time);
+                                $rowExample.find('.data-table-cell-name').text(event.name);
+
+                                $rowExample.removeClass('data-table-row-example');
+                                $rowExample.appendTo('.data-table');
+
+                                latestEventDate = event.date_time;
+                            });
+                        }
+                    );
+                }, 1000);
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Время</th>
+                        <th>Название</th>
+                    </tr>
+                </thead>
+                <tbody class="data-table">
+                    <tr>
+                        <td>111</td>
+                        <td>22</td>
+                    </tr>
+                    <tr class="data-table-row-example">
+                        <td class="data-table-cell-date_time"></td>
+                        <td class="data-table-cell-name"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Get your greeting <a href="/greeting">here</a></p>
+        </div>
+    </body>
+</html>

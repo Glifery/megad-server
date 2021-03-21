@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryEventRepository implements EventRepositoryInterface {
@@ -40,6 +41,14 @@ public class InMemoryEventRepository implements EventRepositoryInterface {
         Collections.reverse(subList);
 
         return subList;
+    }
+
+    public List<AbstractEvent> findAllAsc(LocalDateTime startDate) {
+        return events.entrySet().stream()
+                .flatMap(eventsEntry -> eventsEntry.getValue().stream())
+                .filter(abstractEvent -> abstractEvent.getDateTime().isAfter(startDate))
+                .sorted(Comparator.comparing(AbstractEvent::getDateTime))
+                .collect(Collectors.toList());
     }
 
     @Override

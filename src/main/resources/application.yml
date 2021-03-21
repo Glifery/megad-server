@@ -27,6 +27,7 @@ spreadsheet:
   tab: 2
   megad_port_column: I
   megad_action_column: J
+  disabled: false
 
 megad:
   common:

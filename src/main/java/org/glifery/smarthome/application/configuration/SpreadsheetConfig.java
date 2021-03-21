@@ -15,4 +15,5 @@ public class SpreadsheetConfig {
     private String tab;
     private String megadPortColumn;
     private String megadActionColumn;
+    private boolean disabled;
 }
