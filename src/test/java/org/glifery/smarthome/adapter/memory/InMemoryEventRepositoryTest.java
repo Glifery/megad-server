@@ -2,21 +2,28 @@ package org.glifery.smarthome.adapter.memory;
 
 import org.assertj.core.api.Assertions;
 import org.glifery.smarthome.domain.event.AbstractEvent;
+import org.glifery.smarthome.domain.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.event.ClickEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
 @RunWith(JUnit4.class)
 public class InMemoryEventRepositoryTest {
+    private ApplicationEventPublisher publisher;
     private InMemoryEventRepository repository;
+    private ActionIncomingRequestEvent actionIncomingRequestEvent;
 
     @Before
     public void setup() {
-        repository = new InMemoryEventRepository();
+        publisher = Mockito.mock(ApplicationEventPublisher.class);
+        repository = new InMemoryEventRepository(publisher);
+        actionIncomingRequestEvent = Mockito.mock(ActionIncomingRequestEvent.class);
     }
 
     @Test
@@ -27,9 +34,9 @@ public class InMemoryEventRepositoryTest {
 
     @Test
     public void testReturnOneFromOne() {
-        AbstractEvent event = new ClickEvent("eventName", LocalDateTime.now());
+        AbstractEvent event = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
 
-        repository.add(event);
+        repository.publish(event);
 
         Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event);
         Assertions.assertThat(repository.findLatestByName("anotherName")).isNull();
@@ -40,17 +47,17 @@ public class InMemoryEventRepositoryTest {
 
     @Test
     public void testReturnThreeFromFive() {
-        AbstractEvent event1 = new ClickEvent("eventName", LocalDateTime.now());
-        AbstractEvent event2 = new ClickEvent("eventName", LocalDateTime.now());
-        AbstractEvent event3 = new ClickEvent("eventName", LocalDateTime.now());
-        AbstractEvent event4 = new ClickEvent("eventName", LocalDateTime.now());
-        AbstractEvent event5 = new ClickEvent("eventName", LocalDateTime.now());
+        AbstractEvent event1 = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
+        AbstractEvent event2 = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
+        AbstractEvent event3 = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
+        AbstractEvent event4 = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
+        AbstractEvent event5 = new ClickEvent("eventName", LocalDateTime.now(), actionIncomingRequestEvent);
 
-        repository.add(event1);
-        repository.add(event2);
-        repository.add(event3);
-        repository.add(event4);
-        repository.add(event5);
+        repository.publish(event1);
+        repository.publish(event2);
+        repository.publish(event3);
+        repository.publish(event4);
+        repository.publish(event5);
 
         Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 3)).hasSize(3);
@@ -65,17 +72,17 @@ public class InMemoryEventRepositoryTest {
 
     @Test
     public void testReturnThreeAfterClear() {
-        AbstractEvent event1 = new ClickEvent("eventName", LocalDateTime.now().minusDays(3));
-        AbstractEvent event2 = new ClickEvent("eventName", LocalDateTime.now().minusHours(25));
-        AbstractEvent event3 = new ClickEvent("eventName", LocalDateTime.now().minusHours(12));
-        AbstractEvent event4 = new ClickEvent("eventName", LocalDateTime.now().minusDays(3));
-        AbstractEvent event5 = new ClickEvent("eventName", LocalDateTime.now().minusHours(1));
+        AbstractEvent event1 = new ClickEvent("eventName", LocalDateTime.now().minusDays(3), actionIncomingRequestEvent);
+        AbstractEvent event2 = new ClickEvent("eventName", LocalDateTime.now().minusHours(25), actionIncomingRequestEvent);
+        AbstractEvent event3 = new ClickEvent("eventName", LocalDateTime.now().minusHours(12), actionIncomingRequestEvent);
+        AbstractEvent event4 = new ClickEvent("eventName", LocalDateTime.now().minusDays(3), actionIncomingRequestEvent);
+        AbstractEvent event5 = new ClickEvent("eventName", LocalDateTime.now().minusHours(1), actionIncomingRequestEvent);
 
-        repository.add(event1);
-        repository.add(event2);
-        repository.add(event3);
-        repository.add(event4);
-        repository.add(event5);
+        repository.publish(event1);
+        repository.publish(event2);
+        repository.publish(event3);
+        repository.publish(event4);
+        repository.publish(event5);
 
         Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).hasSize(5);

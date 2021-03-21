@@ -28,18 +28,76 @@
                                 $rowExample.find('.data-table-cell-date_time').text(event.date_time);
                                 $rowExample.find('.data-table-cell-name').text(event.name);
 
-                                $rowExample.removeClass('data-table-row-example');
-                                $rowExample.appendTo('.data-table');
+                                $rowExample
+                                    .removeClass('data-table-row-example')
+                                    .addClass('data-table-row')
+                                    .prependTo('.data-table');
 
                                 latestEventDate = event.date_time;
                             });
                         }
                     );
                 }, 1000);
+
+                $(document).on('click', '.data-table-clear', (event) => {
+                    $('.data-table .data-table-row').remove();
+                });
+
+                $(document).on('mousedown mouseup', '.data-switch', (event) => {
+                    var $this = $(event.target);
+                    var megadId = $this.data('megad');
+                    var port = $this.data('port');
+                    var input = {pt: port};
+
+                    if (event.type == 'mouseup') {
+                        input.m = 1;
+                    }
+
+                    $.get(
+                        `/server/${megadId}`,
+                        input
+                    );
+                });
             });
         </script>
     </head>
     <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Прихожая</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary data-switch" type="button" data-megad="megad1" data-port="17">Прихожая (входная дверь)</button>
+                                <button class="btn btn-primary data-switch" type="button" data-megad="megad1" data-port="18">Прихожая (в кухне)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button">Button</button>
+                        <button class="btn btn-primary" type="button">Button</button>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button">Button</button>
+                        <button class="btn btn-primary" type="button">Button</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <button class="btn btn-primary data-table-clear">Очистить</button>
+                </div>
+            </div>
+        </div>
+        <br/>
         <div class="container-fluid">
             <table class="table table-sm table-bordered">
                 <thead>
@@ -49,17 +107,12 @@
                     </tr>
                 </thead>
                 <tbody class="data-table">
-                    <tr>
-                        <td>111</td>
-                        <td>22</td>
-                    </tr>
                     <tr class="data-table-row-example">
                         <td class="data-table-cell-date_time"></td>
                         <td class="data-table-cell-name"></td>
                     </tr>
                 </tbody>
             </table>
-            <p>Get your greeting <a href="/greeting">here</a></p>
         </div>
     </body>
 </html>

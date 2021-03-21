@@ -1,8 +1,11 @@
 package org.glifery.smarthome.domain.event;
 
+import lombok.Getter;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@Getter
 public class ClickEvent extends AbstractEvent {
     private static Duration ttl = Duration.ofDays(1);
 
@@ -16,7 +19,10 @@ public class ClickEvent extends AbstractEvent {
         UNCLICK
     }
 
-    public ClickEvent(String name, LocalDateTime dateTime) {
+    private final ActionIncomingRequestEvent actionIncomingRequestEvent;
+
+    public ClickEvent(String name, LocalDateTime dateTime, ActionIncomingRequestEvent actionIncomingRequestEvent) {
         super(name, dateTime, ttl);
+        this.actionIncomingRequestEvent = actionIncomingRequestEvent;
     }
 }

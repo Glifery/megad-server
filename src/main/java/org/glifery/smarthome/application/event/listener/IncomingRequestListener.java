@@ -7,7 +7,6 @@ import org.glifery.smarthome.domain.event.AbstractEvent;
 import org.glifery.smarthome.domain.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionIncomingRequest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +14,14 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /*
 This handler converts standard PRESS event to various CLICK events
 
 +CLICK - any click (PRESS)
 +CLICK.FIRST - first click with any clicks after (PRESS if no other PRESS before)
-CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so far and before)
+CLICK.SINGLE - single click, no click after (near after CLICK_FIRST if no CLICK_DOUBLE so far)
 +CLICK.DOUBLE - double click (PRESS with PRESS near before)
 +CLICK.TRIPLE - triple click (PRESS with 2 PRESSes near before)
 +CLICK.HOLD - hold after click (near after PRESS if no RELEASE so far)
@@ -31,60 +31,68 @@ CLICK.SINGLE - single click, no click after (near after RELEASE if no PRESS so f
 @Component
 public class IncomingRequestListener extends AbstractPublishingListener {
     private final ApplicationConfig config;
-    private final EventRepositoryInterface eventRepository;
 
-    public IncomingRequestListener(ApplicationEventPublisher publisher, ApplicationConfig config, EventRepositoryInterface eventRepository) {
-        super(publisher);
+    public IncomingRequestListener(ApplicationConfig config, EventRepositoryInterface eventRepository) {
+        super(eventRepository);
         this.config = config;
-        this.eventRepository = eventRepository;
     }
 
     @EventListener
     public void checkBaseClicks(ActionIncomingRequestEvent event) {
-        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.PRESS) {
-            handleLog(event);
-
-            publishClickEvent(ClickEvent.Type.CLICK, event);
-
-            List<AbstractEvent> lastEvents = eventRepository.findByNameDesc(event.getRequest().toString(), 2);
-            LocalDateTime maxTimeForDoubleClick = event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds()));
-
-            if (lastEvents.isEmpty() || lastEvents.get(0).wasBefore(maxTimeForDoubleClick)) {
-                publishClickEvent(ClickEvent.Type.CLICK_FIRST, event);
-            } else {
-                if ((lastEvents.size() == 1) || lastEvents.get(1).wasBefore(maxTimeForDoubleClick)) {
-                    publishClickEvent(ClickEvent.Type.CLICK_DOUBLE, event);
-                } else {
-                    publishClickEvent(ClickEvent.Type.CLICK_TRIPLE, event);
-                }
-            }
+        if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {
+            return;
         }
 
-        if (event.getRequest().getMode() == ActionIncomingRequest.Mode.RELEASE) {
-            publishClickEvent(ClickEvent.Type.UNCLICK, event);
-        }
+        handleLog(event);
 
-        eventRepository.add(event);
+        publishClickEvent(ClickEvent.Type.CLICK, event);
+
+        LocalDateTime maxTimeForDoubleClick = event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds()));
+        List<AbstractEvent> lastEventsWithinPeriod = eventRepository
+                .findByNameDesc(event.getRequest().toString(), 3).stream()
+                .filter(abstractEvent -> abstractEvent.wasNotBefore(maxTimeForDoubleClick))
+                .collect(Collectors.toList());
+
+        switch (lastEventsWithinPeriod.size()) {
+            case 1: publishClickEvent(ClickEvent.Type.CLICK_FIRST, event); break;
+            case 2: publishClickEvent(ClickEvent.Type.CLICK_DOUBLE, event); break;
+            case 3: publishClickEvent(ClickEvent.Type.CLICK_TRIPLE, event); break;
+        }
     }
 
     @EventListener
-    public void checkSingleClick(ActionIncomingRequestEvent event) throws InterruptedException {
+    public void checkUnclick(ActionIncomingRequestEvent event) {
         if (event.getRequest().getMode() != ActionIncomingRequest.Mode.RELEASE) {
             return;
         }
 
-        Duration delay = Duration.ofMillis(config.getHoldClickMilliseconds()).dividedBy(2);
+        handleLog(event);
+
+        publishClickEvent(ClickEvent.Type.UNCLICK, event);
+    }
+
+    @EventListener
+    public void checkSingleClick(ClickEvent event) throws InterruptedException {
+        if (!event.getName().contains(ClickEvent.Type.CLICK_FIRST.toString())) {
+            return;
+        }
+
+        Duration delay = Duration.ofMillis(config.getDoubleClickMilliseconds());
 
         Thread.sleep(delay.toMillis());
         LocalDateTime currentTime = LocalDateTime.now();
 
         handleLog(event, delay);
 
-        String latestPressEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.PRESS, ActionIncomingRequest.ClickType.SINGLE);
-        AbstractEvent latestPressEvent = eventRepository.findLatestByName(latestPressEventName);
+        String latestDoubleClickEventName = event.getName().replace(ClickEvent.Type.CLICK_FIRST.toString(), ClickEvent.Type.CLICK_DOUBLE.toString());
 
-        if (Objects.isNull(latestPressEvent) || latestPressEvent.wasBefore(event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds())))) {
-            publishClickEvent(ClickEvent.Type.CLICK_SINGLE, event, currentTime);
+        AbstractEvent latestDoubleClickEventWithinPeriod = eventRepository
+                .findLatestByName(latestDoubleClickEventName)
+                .filter(abstractEvent -> abstractEvent.wasNotBefore(event.getDateTime()))
+                .orElse(null);
+
+        if (Objects.isNull(latestDoubleClickEventWithinPeriod)) {
+            publishClickEvent(ClickEvent.Type.CLICK_SINGLE, event.getActionIncomingRequestEvent(), currentTime);
         }
     }
 
@@ -102,9 +110,12 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         handleLog(event, delay);
 
         String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
-        AbstractEvent latestReleaseEvent = eventRepository.findLatestByName(latestReleaseEventName);
+        AbstractEvent latestReleaseEventWithinPeriod = eventRepository
+                .findLatestByName(latestReleaseEventName)
+                .filter(abstractEvent -> abstractEvent.wasNotBefore(event.getDateTime()))
+                .orElse(null);
 
-        if (Objects.isNull(latestReleaseEvent) || latestReleaseEvent.wasBefore(event.getDateTime())) {
+        if (Objects.isNull(latestReleaseEventWithinPeriod)) {
             publishClickEvent(ClickEvent.Type.CLICK_HOLD, event, currentTime);
         }
     }
@@ -116,6 +127,6 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     private void publishClickEvent(ClickEvent.Type clickType, ActionIncomingRequestEvent parentEvent, LocalDateTime dateTime) {
         String eventName = String.format("%s.%s", parentEvent.getRequest().getPort(), clickType);
 
-        publishAndLog(new ClickEvent(eventName, dateTime));
+        publishAndLog(new ClickEvent(eventName, dateTime, parentEvent));
     }
 }

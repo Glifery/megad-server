@@ -1,31 +1,44 @@
 package org.glifery.smarthome.adapter.memory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.port.EventRepositoryInterface;
 import org.glifery.smarthome.domain.event.AbstractEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class InMemoryEventRepository implements EventRepositoryInterface {
+    private final ApplicationEventPublisher publisher;
+
     private final Map<String, LinkedList<AbstractEvent>> events = new HashMap<>();
 
-    @Override
-    public void add(AbstractEvent abstractEvent) {
-        getEventsList(abstractEvent.getName()).add(abstractEvent);
+    public InMemoryEventRepository(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
     }
 
     @Override
-    public AbstractEvent findLatestByName(String name) {
+    public void publish(AbstractEvent abstractEvent) {
+        log.info(String.format("Publishing event: %s", abstractEvent.getName()));
+
+        getEventsList(abstractEvent.getName()).add(abstractEvent);
+
+        publisher.publishEvent(abstractEvent);
+    }
+
+    @Override
+    public Optional<AbstractEvent> findLatestByName(String name) {
         LinkedList<AbstractEvent> eventsList = getEventsList(name);
 
         if (eventsList.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
-        return eventsList.getLast();
+        return Optional.of(eventsList.getLast());
     }
 
     @Override

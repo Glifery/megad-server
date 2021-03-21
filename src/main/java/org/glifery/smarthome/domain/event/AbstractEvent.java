@@ -19,4 +19,8 @@ public abstract class AbstractEvent {
     public boolean wasBefore(LocalDateTime compareDateTime) {
         return dateTime.isBefore(compareDateTime);
     }
+
+    public boolean wasNotBefore(LocalDateTime compareDateTime) {
+        return !wasBefore(compareDateTime);
+    }
 }

@@ -10,10 +10,7 @@ import org.glifery.smarthome.domain.model.megad.Port;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This handler runs predefined (default) MegaD behavior for given port
@@ -32,8 +29,8 @@ public class PredefinedPortActionListener extends AbstractListener {
         }
 
         handleLog(event);
-        List<String> eventNameParts = Arrays.stream(event.getName().split("\\.")).collect(Collectors.toList());
-        Port port = Port.create(eventNameParts.get(0), Integer.parseInt(eventNameParts.get(1)));
+
+        Port port = event.getActionIncomingRequestEvent().getRequest().getPort();
 
         ActionsList predefinedActionsList = portActionsRepository.getActionsList(port);
 

@@ -4,11 +4,12 @@ import org.glifery.smarthome.domain.event.AbstractEvent;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepositoryInterface {
-    void add(AbstractEvent abstractEvent);
+    void publish(AbstractEvent abstractEvent);
 
-    AbstractEvent findLatestByName(String name);
+    Optional<AbstractEvent> findLatestByName(String name);
 
     List<AbstractEvent> findByNameDesc(String name, Integer limit);
 

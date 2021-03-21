@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.adapter.controller.util.MegadIncomingRequestConverter;
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
+import org.glifery.smarthome.application.port.EventRepositoryInterface;
 import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
 import org.glifery.smarthome.domain.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.megad.*;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class MegadController {
 
     private final ApplicationConfig applicationConfig;
     private final PortActionsRepositoryInterface portActionsRepository;
-    private final ApplicationEventPublisher publisher;
+    private final EventRepositoryInterface eventRepository;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -39,7 +39,7 @@ public class MegadController {
     ) {
         IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, clickType, clickCounter, mode, portStatus);
 
-        log.info(String.format("HTTP request: %s", incomingRequest));
+        log.info(String.format("Incoming HTTP request: %s", incomingRequest));
 
         if (incomingRequest instanceof ActionIncomingRequest) {
 
@@ -50,7 +50,7 @@ public class MegadController {
             return publishRequest((ActionIncomingRequest) incomingRequest);
         }
 
-        log.info(String.format("HTTP response for %s: empty", incomingRequest));
+        log.info(String.format("Incoming HTTP response for %s: empty", incomingRequest));
 
         return empty;
     }
@@ -72,9 +72,7 @@ public class MegadController {
     }
 
     private String publishRequest(ActionIncomingRequest incomingRequest) {
-        publisher.publishEvent(new ActionIncomingRequestEvent(incomingRequest.toString(), incomingRequest));
-
-        log.info(String.format("Publish %s event. HTTP response: empty", incomingRequest));
+        eventRepository.publish(new ActionIncomingRequestEvent(incomingRequest.toString(), incomingRequest));
 
         return empty;
     }

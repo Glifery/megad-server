@@ -16,7 +16,7 @@ application:
   direct_megad_response: false
   double_click_milliseconds: 1000
   hold_click_milliseconds: 1000
-  autoupdate_port_state_disabled: false
+  autoupdate_port_state_disabled: true
   autoupdate_port_state_seconds: 10
 
 spreadsheet:
