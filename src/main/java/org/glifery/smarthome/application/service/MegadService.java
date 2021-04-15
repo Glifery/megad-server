@@ -53,6 +53,10 @@ public class MegadService {
         });
     }
 
+    public void sendCommand(SingleAction singleAction) {
+        sendCommand(ActionsList.create(singleAction));
+    }
+
     private Map<String, ActionsList> splitByMegadId(ActionsList actionsList) {
         Map<String, ActionsList> operations = new HashMap<>();
 

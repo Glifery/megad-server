@@ -28,6 +28,10 @@ public class SingleAction {
         return new SingleAction(new Port(new MegadId(megadId), port), action);
     }
 
+    public static SingleAction copyWithAction(SingleAction singleAction, Integer action) {
+        return new SingleAction(singleAction.getPort(), action);
+    }
+
     public String toString() {
         return String.format("%s:%s", port.getNumber(), action);
     }
