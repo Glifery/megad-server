@@ -2,7 +2,7 @@ package org.glifery.smarthome.application.event.listener;
 
 import lombok.RequiredArgsConstructor;
 import org.glifery.smarthome.application.service.MegadService;
-import org.glifery.smarthome.domain.event.ActionEvent;
+import org.glifery.smarthome.domain.model.event.ActionEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

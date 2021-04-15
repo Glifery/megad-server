@@ -1,7 +1,6 @@
-package org.glifery.smarthome.domain.event;
+package org.glifery.smarthome.domain.model.event;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.glifery.smarthome.domain.model.megad.ActionIncomingRequest;
 
 import java.time.Duration;

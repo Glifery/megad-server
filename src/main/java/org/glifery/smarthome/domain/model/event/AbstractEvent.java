@@ -1,4 +1,4 @@
-package org.glifery.smarthome.domain.event;
+package org.glifery.smarthome.domain.model.event;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

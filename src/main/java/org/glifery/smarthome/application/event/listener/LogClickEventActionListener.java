@@ -1,7 +1,7 @@
 package org.glifery.smarthome.application.event.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.glifery.smarthome.domain.event.ClickEvent;
+import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.springframework.stereotype.Component;
 
 @Slf4j

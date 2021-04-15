@@ -1,9 +1,9 @@
 package org.glifery.smarthome.adapter.memory;
 
 import org.assertj.core.api.Assertions;
-import org.glifery.smarthome.domain.event.AbstractEvent;
-import org.glifery.smarthome.domain.event.ActionIncomingRequestEvent;
-import org.glifery.smarthome.domain.event.ClickEvent;
+import org.glifery.smarthome.domain.model.event.AbstractEvent;
+import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
+import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

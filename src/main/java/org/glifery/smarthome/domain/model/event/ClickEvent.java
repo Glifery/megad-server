@@ -1,4 +1,4 @@
-package org.glifery.smarthome.domain.event;
+package org.glifery.smarthome.domain.model.event;
 
 import lombok.Getter;
 

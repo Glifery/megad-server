@@ -1,4 +1,4 @@
-package org.glifery.smarthome.domain.event;
+package org.glifery.smarthome.domain.model.event;
 
 import lombok.Getter;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
@@ -13,7 +13,7 @@ public class ActionEvent extends AbstractEvent {
     private final SingleAction singleAction;
 
     public ActionEvent(SingleAction singleAction, LocalDateTime dateTime) {
-        super(singleAction.toString(), dateTime, ttl);
+        super(String.format("action.%s", singleAction.toString()), dateTime, ttl);
         this.singleAction = singleAction;
     }
 }

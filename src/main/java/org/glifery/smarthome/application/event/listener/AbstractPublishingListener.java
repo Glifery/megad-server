@@ -3,7 +3,7 @@ package org.glifery.smarthome.application.event.listener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.port.EventRepositoryInterface;
-import org.glifery.smarthome.domain.event.AbstractEvent;
+import org.glifery.smarthome.domain.model.event.AbstractEvent;
 
 @Slf4j
 @RequiredArgsConstructor

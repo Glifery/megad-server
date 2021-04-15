@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.adapter.memory.PortActionsRepository;
 import org.glifery.smarthome.application.service.PortManager;
-import org.glifery.smarthome.domain.event.ClickEvent;
+import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.springframework.context.event.EventListener;

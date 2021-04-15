@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.exception.InvalidActionException;
 import org.glifery.smarthome.application.port.EventRepositoryInterface;
 import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
-import org.glifery.smarthome.domain.event.ActionEvent;
+import org.glifery.smarthome.domain.model.event.ActionEvent;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.glifery.smarthome.domain.model.megad.SingleAction;

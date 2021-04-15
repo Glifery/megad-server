@@ -6,7 +6,7 @@ import org.glifery.smarthome.adapter.controller.util.MegadIncomingRequestConvert
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
 import org.glifery.smarthome.application.port.EventRepositoryInterface;
 import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
-import org.glifery.smarthome.domain.event.ActionIncomingRequestEvent;
+import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.megad.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
