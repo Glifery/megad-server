@@ -7,11 +7,13 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @RequiredArgsConstructor
 public abstract class AbstractEvent {
+    protected final UUID uuid = UUID.randomUUID();
     protected final LocalDateTime createDateTime = LocalDateTime.now();
     protected final String name;
     protected final LocalDateTime eventDateTime;

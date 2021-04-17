@@ -34,3 +34,5 @@ build/
 
 /src/main/resources/google-sheets-client-secret.json
 /google-tokens
+
+node_modules/*
