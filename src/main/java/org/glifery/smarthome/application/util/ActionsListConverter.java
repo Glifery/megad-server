@@ -28,6 +28,22 @@ public class ActionsListConverter {
         return actionsList;
     }
 
+    public static String toMegadCommand(ActionsList actionsList) {
+        return actionsList.getSingleActions().stream()
+                .map(ActionsListConverter::toMegadCommand)
+                .collect(Collectors.joining(";"));
+    }
+
+    private static String toMegadCommand(SingleAction singleAction) {
+        Integer actionNumber = SingleAction.actionMap.entrySet().stream()
+                .filter(integerActionEntry -> singleAction.getAction().equals(integerActionEntry.getValue()))
+                .findFirst()
+                .map(integerActionEntry -> integerActionEntry.getKey())
+                .orElseThrow(() -> new InvalidActionException(String.format("Action %s is not implemented", singleAction)));
+
+        return String.format("%s:%s", singleAction.getPort().getNumber(), actionNumber);
+    }
+
     private static String filterOnlySimpleClick(String actionString) {
         if (actionString.contains("|")) {
             return Arrays.stream(actionString.split("\\|")).collect(Collectors.toList()).get(0);
@@ -59,7 +75,7 @@ public class ActionsListConverter {
 
             SingleAction singleAction = new SingleAction(
                     new Port(megadId, portNumber),
-                    actionCode
+                    SingleAction.actionMap.get(actionCode)
             );
 
             return singleAction;

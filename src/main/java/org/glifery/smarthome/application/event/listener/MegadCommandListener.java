@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 /**
  * This handler sends request to MegaD controller
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MegadCommandListener extends AbstractListener {
@@ -18,7 +17,6 @@ public class MegadCommandListener extends AbstractListener {
 
     @EventListener
     public void handleActionEvent(ActionEvent actionEvent) {
-        log.warn("----------------1111");
         megadService.sendCommand(actionEvent.getSingleAction());
     }
 }

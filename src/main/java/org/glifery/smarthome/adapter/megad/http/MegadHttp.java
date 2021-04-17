@@ -5,8 +5,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.glifery.smarthome.adapter.megad.converter.PortStatesConverter;
 import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.application.util.ActionsListConverter;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
+import org.glifery.smarthome.domain.model.megad.MegadId;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
@@ -44,7 +45,7 @@ public class MegadHttp implements MegadGatewayInterface {
     }
 
     public String sendCommand(MegadId megadId, ActionsList actionsList) throws IOException {
-        return doSend(megadId, actionsList.toString());
+        return doSend(megadId, ActionsListConverter.toMegadCommand(actionsList));
     }
 
     private String doSend(MegadId megadId, String command) throws IOException {

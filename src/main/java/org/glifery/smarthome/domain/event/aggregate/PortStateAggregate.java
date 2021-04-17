@@ -44,11 +44,11 @@ public class PortStateAggregate extends BaseAggregate {
     private PortState.State getNewState(SingleAction singleAction) {
         switch (singleAction.getAction()) {
             //SingleAction.OFF
-            case 0: return PortState.State.OFF;
+            case OFF: return PortState.State.OFF;
             //SingleAction.ON
-            case 1: return PortState.State.ON;
+            case ON: return PortState.State.ON;
             //SingleAction.SWITCH
-            case 2: return currentState.getState().equals(PortState.State.OFF)
+            case SWITCH: return currentState.getState().equals(PortState.State.OFF)
                     ? PortState.State.ON
                     : PortState.State.OFF;
             default: throw new InvalidActionException(String.format("Action %s is not supported", singleAction.getAction()));

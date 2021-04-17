@@ -40,9 +40,9 @@ public class MegadServiceTest {
     @Test
     public void testMultipleActionsDifferentMegadId() throws IOException {
         ActionsList actionsListInput = ActionsList.create(
-                SingleAction.create("megad1", 7, SingleAction.ON),
-                SingleAction.create("megad1", 8, SingleAction.OFF),
-                SingleAction.create("megad2", 9, SingleAction.SWITCH)
+                SingleAction.create("megad1", 7, SingleAction.Action.ON),
+                SingleAction.create("megad1", 8, SingleAction.Action.OFF),
+                SingleAction.create("megad2", 9, SingleAction.Action.SWITCH)
         );
 
         megadService.sendCommand(actionsListInput);
@@ -68,9 +68,9 @@ public class MegadServiceTest {
     @Test
     public void testOneMegadId() throws IOException {
         ActionsList actionsListInput = ActionsList.create(
-                SingleAction.create("megad1", 7, SingleAction.ON),
-                SingleAction.create("megad1", 8, SingleAction.OFF),
-                SingleAction.create("megad1", 9, SingleAction.SWITCH)
+                SingleAction.create("megad1", 7, SingleAction.Action.ON),
+                SingleAction.create("megad1", 8, SingleAction.Action.OFF),
+                SingleAction.create("megad1", 9, SingleAction.Action.SWITCH)
         );
 
         megadService.sendCommand(actionsListInput);

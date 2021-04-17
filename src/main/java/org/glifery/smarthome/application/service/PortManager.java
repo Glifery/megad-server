@@ -40,17 +40,17 @@ public class PortManager {
 
         switch (singleAction.getAction()) {
             //SingleAction.OFF
-            case 0: return currentState.getState().equals(PortState.State.OFF)
+            case OFF: return currentState.getState().equals(PortState.State.OFF)
                     ? null
                     : singleAction;
             //SingleAction.ON
-            case 1: return currentState.getState().equals(PortState.State.ON)
+            case ON: return currentState.getState().equals(PortState.State.ON)
                     ? null
                     : singleAction;
             //SingleAction.SWITCH
-            case 2: return currentState.getState().equals(PortState.State.OFF)
-                    ? SingleAction.copyWithAction(singleAction, SingleAction.ON)
-                    : SingleAction.copyWithAction(singleAction, SingleAction.OFF);
+            case SWITCH: return currentState.getState().equals(PortState.State.OFF)
+                    ? SingleAction.copyWithAction(singleAction, SingleAction.Action.ON)
+                    : SingleAction.copyWithAction(singleAction, SingleAction.Action.OFF);
             default: throw new InvalidActionException(String.format("Action %s is not implemented", singleAction.getAction()));
         }
     }
