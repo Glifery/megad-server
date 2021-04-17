@@ -2,7 +2,9 @@ package org.glifery.smarthome.adapter.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.glifery.smarthome.application.port.EventRepositoryInterface;
+import org.glifery.smarthome.application.port.EventStoreInterface;
+import org.glifery.smarthome.application.port.EventSourceInterface;
+import org.glifery.smarthome.domain.event.aggregate.AllFromDateAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -19,7 +21,8 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 public class EventMonitoringController {
-    private final EventRepositoryInterface eventRepository;
+    private final EventStoreInterface eventRepository;
+    private final EventSourceInterface eventSource;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -29,6 +32,11 @@ public class EventMonitoringController {
     public List<AbstractEvent> update(
             @RequestParam(name = "start_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate
     ) {
-        return eventRepository.findAllAsc(Optional.ofNullable(startDate).orElse(LocalDateTime.now().minusMinutes(1)));
+        AllFromDateAggregate aggregate = new AllFromDateAggregate(
+                Optional.ofNullable(startDate).orElse(LocalDateTime.now().minusMinutes(1))
+        );
+        aggregate.load(eventSource);
+
+        return aggregate.getAllByDateAsc();
     }
 }

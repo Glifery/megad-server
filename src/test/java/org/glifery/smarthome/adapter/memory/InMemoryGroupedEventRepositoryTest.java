@@ -14,21 +14,21 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.LocalDateTime;
 
 @RunWith(JUnit4.class)
-public class InMemoryEventRepositoryTest {
+public class InMemoryGroupedEventRepositoryTest {
     private ApplicationEventPublisher publisher;
-    private InMemoryEventRepository repository;
+    private InMemoryGroupedEventRepository repository;
     private ActionIncomingRequestEvent actionIncomingRequestEvent;
 
     @Before
     public void setup() {
         publisher = Mockito.mock(ApplicationEventPublisher.class);
-        repository = new InMemoryEventRepository(publisher);
+        repository = new InMemoryGroupedEventRepository(publisher);
         actionIncomingRequestEvent = Mockito.mock(ActionIncomingRequestEvent.class);
     }
 
     @Test
     public void testEmptyOnStart() {
-        Assertions.assertThat(repository.findLatestByName("eventName")).isNull();
+        Assertions.assertThat(repository.findLatestByName("eventName").orElse(null)).isNull();
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).hasSize(0);
     }
 
@@ -38,8 +38,8 @@ public class InMemoryEventRepositoryTest {
 
         repository.publish(event);
 
-        Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event);
-        Assertions.assertThat(repository.findLatestByName("anotherName")).isNull();
+        Assertions.assertThat(repository.findLatestByName("eventName").orElse(null)).isEqualTo(event);
+        Assertions.assertThat(repository.findLatestByName("anotherName").orElse(null)).isNull();
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).hasSize(1);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).contains(event);
         Assertions.assertThat(repository.findByNameDesc("anotherName", 10)).hasSize(0);
@@ -59,7 +59,7 @@ public class InMemoryEventRepositoryTest {
         repository.publish(event4);
         repository.publish(event5);
 
-        Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event5);
+        Assertions.assertThat(repository.findLatestByName("eventName").orElse(null)).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 3)).hasSize(3);
 
         Assertions.assertThat(repository.findByNameDesc("eventName", 3).get(0)).isEqualTo(event5);
@@ -84,13 +84,13 @@ public class InMemoryEventRepositoryTest {
         repository.publish(event4);
         repository.publish(event5);
 
-        Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event5);
+        Assertions.assertThat(repository.findLatestByName("eventName").orElse(null)).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).hasSize(5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10).get(0)).isEqualTo(event5);
 
         repository.clearByTtl();
 
-        Assertions.assertThat(repository.findLatestByName("eventName")).isEqualTo(event5);
+        Assertions.assertThat(repository.findLatestByName("eventName").orElse(null)).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10)).hasSize(3);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10).get(0)).isEqualTo(event5);
         Assertions.assertThat(repository.findByNameDesc("eventName", 10).get(1)).isEqualTo(event4);

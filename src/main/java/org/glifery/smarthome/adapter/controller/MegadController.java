@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.adapter.controller.util.MegadIncomingRequestConverter;
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
-import org.glifery.smarthome.application.port.EventRepositoryInterface;
+import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
 import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.megad.*;
@@ -21,7 +21,7 @@ public class MegadController {
 
     private final ApplicationConfig applicationConfig;
     private final PortActionsRepositoryInterface portActionsRepository;
-    private final EventRepositoryInterface eventRepository;
+    private final EventStoreInterface eventRepository;
 
     @RequestMapping(
             method = RequestMethod.GET,

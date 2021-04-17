@@ -2,7 +2,9 @@ package org.glifery.smarthome.application.event.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
-import org.glifery.smarthome.application.port.EventRepositoryInterface;
+import org.glifery.smarthome.application.port.EventSourceInterface;
+import org.glifery.smarthome.application.port.EventStoreInterface;
+import org.glifery.smarthome.domain.event.aggregate.NameAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
 import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.event.ClickEvent;
@@ -31,10 +33,12 @@ CLICK.SINGLE - single click, no click after (near after CLICK_FIRST if no CLICK_
 @Component
 public class IncomingRequestListener extends AbstractPublishingListener {
     private final ApplicationConfig config;
+    private final EventSourceInterface eventSource;
 
-    public IncomingRequestListener(ApplicationConfig config, EventRepositoryInterface eventRepository) {
-        super(eventRepository);
+    public IncomingRequestListener(ApplicationConfig config, EventStoreInterface eventStore, EventSourceInterface eventSource) {
+        super(eventStore);
         this.config = config;
+        this.eventSource = eventSource;
     }
 
     @EventListener
@@ -47,9 +51,11 @@ public class IncomingRequestListener extends AbstractPublishingListener {
 
         publishClickEvent(ClickEvent.Type.CLICK, event);
 
+        NameAggregate nameAggregate = new NameAggregate(event.getRequest().toString(), 3);
+        nameAggregate.load(eventSource);
+
         LocalDateTime maxTimeForDoubleClick = event.getDateTime().minus(Duration.ofMillis(config.getDoubleClickMilliseconds()));
-        List<AbstractEvent> lastEventsWithinPeriod = eventRepository
-                .findByNameDesc(event.getRequest().toString(), 3).stream()
+        List<AbstractEvent> lastEventsWithinPeriod = nameAggregate.getAllByDateDesc().stream()
                 .filter(abstractEvent -> abstractEvent.wasNotBefore(maxTimeForDoubleClick))
                 .collect(Collectors.toList());
 
@@ -85,9 +91,11 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         handleLog(event, delay);
 
         String latestDoubleClickEventName = event.getName().replace(ClickEvent.Type.CLICK_FIRST.toString(), ClickEvent.Type.CLICK_DOUBLE.toString());
+        NameAggregate nameAggregate = new NameAggregate(latestDoubleClickEventName, 1);
+        nameAggregate.load(eventSource);
 
-        AbstractEvent latestDoubleClickEventWithinPeriod = eventRepository
-                .findLatestByName(latestDoubleClickEventName)
+        AbstractEvent latestDoubleClickEventWithinPeriod = nameAggregate.getAllByDateDesc().stream()
+                .findFirst()
                 .filter(abstractEvent -> abstractEvent.wasNotBefore(event.getDateTime()))
                 .orElse(null);
 
@@ -110,8 +118,11 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         handleLog(event, delay);
 
         String latestReleaseEventName = String.format("%s.%s.%s", event.getRequest().getPort(), ActionIncomingRequest.Mode.RELEASE, ActionIncomingRequest.ClickType.SINGLE);
-        AbstractEvent latestReleaseEventWithinPeriod = eventRepository
-                .findLatestByName(latestReleaseEventName)
+        NameAggregate nameAggregate = new NameAggregate(latestReleaseEventName, 1);
+        nameAggregate.load(eventSource);
+
+        AbstractEvent latestReleaseEventWithinPeriod = nameAggregate.getAllByDateDesc().stream()
+                .findFirst()
                 .filter(abstractEvent -> abstractEvent.wasNotBefore(event.getDateTime()))
                 .orElse(null);
 
