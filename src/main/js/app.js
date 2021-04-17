@@ -1,6 +1,8 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client');
+const HeaderForm = require('./components/HeaderForm');
+const EventList = require('./components/EventList');
 
 
 class App extends React.Component {
@@ -31,38 +33,25 @@ class App extends React.Component {
 
     render() {
         return (
-            <EventList events={this.state.events}/>
+            <>
+                <HeaderForm events={1}/>
+                <br/>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm">
+                            <button className="btn btn-primary data-table-clear" onClick={() => {
+                                this.setState({
+                                    events: [],
+                                    latestEventDate: this.state.latestEventDate
+                                });
+                            }}>Очистить</button>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <EventList events={this.state.events}/>
+            </>
         );
-    }
-}
-
-class EventList extends React.Component{
-    render() {
-        const events = this.props.events.map(event =>
-            <Event key={event.uuid} event={event}/>
-        );
-        return (
-            <table>
-                <tbody>
-                <tr>
-                    <th>Время</th>
-                    <th>Название</th>
-                </tr>
-                {events}
-                </tbody>
-            </table>
-        )
-    }
-}
-
-class Event extends React.Component{
-    render() {
-        return (
-            <tr>
-                <td>{this.props.event.event_date_time}</td>
-                <td>{this.props.event.name}</td>
-            </tr>
-        )
     }
 }
 
