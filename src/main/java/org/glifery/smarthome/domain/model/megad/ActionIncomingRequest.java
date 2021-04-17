@@ -8,23 +8,23 @@ public class ActionIncomingRequest extends IncomingRequest {
     public enum Mode {
         PRESS, RELEASE, HOLD
     }
-    public enum ClickType {
+    public enum Type {
         SINGLE, DOUBLE
     }
 
-    public ActionIncomingRequest(Port port, Mode mode, ClickType clickType) {
+    public ActionIncomingRequest(Port port, Mode mode, Type type) {
         super(port);
         this.mode = mode;
-        this.clickType = clickType;
+        this.type = type;
     }
 
     @NonNull
     private final Mode mode;
 
     @NonNull
-    private final ClickType clickType;
+    private final Type type;
 
     public String toString() {
-        return String.format("%s.%s.%s", port, mode, clickType);
+        return String.format("%s.%s.%s", port, mode, type);
     }
 }

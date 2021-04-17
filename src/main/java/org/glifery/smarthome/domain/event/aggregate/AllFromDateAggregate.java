@@ -14,6 +14,6 @@ public class AllFromDateAggregate extends BaseAccumulativeAggregate {
 
     @Override
     protected boolean supports(AbstractEvent event) {
-        return event.getDateTime().isAfter(startDate);
+        return event.getEventDateTime().isAfter(startDate);
     }
 }

@@ -13,7 +13,7 @@ public class ActionEvent extends AbstractEvent {
     private final SingleAction singleAction;
 
     public ActionEvent(SingleAction singleAction, LocalDateTime dateTime) {
-        super(String.format("action.%s", singleAction.toString()), dateTime, ttl);
+        super(String.format("action.%s", singleAction), dateTime, ttl);
         this.singleAction = singleAction;
     }
 }

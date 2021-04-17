@@ -11,7 +11,7 @@ public class AbstractPublishingListener extends AbstractListener {
     protected final EventStoreInterface eventRepository;
 
     protected void publishAndLog(AbstractEvent event) {
-        log.info(String.format("Publish %s event (%s)", event.getName(), event.getDateTime()));
+        log.info(String.format("Publish %s event (%s)", event.getName(), event.getEventDateTime()));
 
         eventRepository.publish(event);
     }

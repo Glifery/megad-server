@@ -25,7 +25,7 @@
                             data.forEach(event => {
                                 $rowExample = $('.data-table').find('.data-table-row-example').clone();
 
-                                $rowExample.find('.data-table-cell-date_time').text(event.date_time);
+                                $rowExample.find('.data-table-cell-date_time').text(event.event_date_time);
                                 $rowExample.find('.data-table-cell-name').text(event.name);
 
                                 $rowExample
@@ -33,7 +33,7 @@
                                     .addClass('data-table-row')
                                     .prependTo('.data-table');
 
-                                latestEventDate = event.date_time;
+                                latestEventDate = event.event_date_time;
                             });
                         }
                     );

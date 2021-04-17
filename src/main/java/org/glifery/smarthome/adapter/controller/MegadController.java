@@ -31,13 +31,13 @@ public class MegadController {
     public String input(
             @PathVariable MegadId megadId,
             @RequestParam(name = "pt", required = true) Integer port,
-            @RequestParam(name = "click", required = false) ActionIncomingRequest.ClickType clickType,
+            @RequestParam(name = "click", required = false) ActionIncomingRequest.Type type,
             @RequestParam(name = "cnt", required = false) Integer clickCounter,
             @RequestParam(name = "m", required = false) ActionIncomingRequest.Mode mode,
             @RequestParam(name = "v", required = false) StatusIncomingRequest.Status portStatus,
             @RequestParam(name = "mdid", required = false) String mdid
     ) {
-        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, clickType, clickCounter, mode, portStatus);
+        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, type, clickCounter, mode, portStatus);
 
         log.info(String.format("Incoming HTTP request: %s", incomingRequest));
 
@@ -72,7 +72,7 @@ public class MegadController {
     }
 
     private String publishRequest(ActionIncomingRequest incomingRequest) {
-        eventRepository.publish(new ActionIncomingRequestEvent(incomingRequest.toString(), incomingRequest));
+        eventRepository.publish(new ActionIncomingRequestEvent(incomingRequest));
 
         return empty;
     }

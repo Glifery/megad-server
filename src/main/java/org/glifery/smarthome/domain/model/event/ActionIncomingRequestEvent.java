@@ -12,8 +12,8 @@ public class ActionIncomingRequestEvent extends AbstractEvent {
 
     private final ActionIncomingRequest request;
 
-    public ActionIncomingRequestEvent(String name, ActionIncomingRequest request) {
-        super(name, LocalDateTime.now(), ttl);
+    public ActionIncomingRequestEvent(ActionIncomingRequest request) {
+        super(String.format("request.%s", request), LocalDateTime.now(), ttl);
         this.request = request;
     }
 }

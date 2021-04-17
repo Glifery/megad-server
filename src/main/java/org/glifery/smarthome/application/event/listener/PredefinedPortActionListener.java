@@ -30,12 +30,12 @@ public class PredefinedPortActionListener extends AbstractListener {
 
         handleLog(event);
 
-        Port port = event.getActionIncomingRequestEvent().getRequest().getPort();
+        Port port = event.getPort();
 
         ActionsList predefinedActionsList = portActionsRepository.getActionsList(port);
 
         if (Objects.nonNull(predefinedActionsList)) {
-            portManager.applyActions(predefinedActionsList, event.getDateTime());
+            portManager.applyActions(predefinedActionsList, event.getEventDateTime());
         }
     }
 }

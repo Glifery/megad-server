@@ -12,15 +12,20 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @RequiredArgsConstructor
 public abstract class AbstractEvent {
+    protected final LocalDateTime createDateTime = LocalDateTime.now();
     protected final String name;
-    protected final LocalDateTime dateTime;
+    protected final LocalDateTime eventDateTime;
     protected final Duration ttl;
 
     public boolean wasBefore(LocalDateTime compareDateTime) {
-        return dateTime.isBefore(compareDateTime);
+        return eventDateTime.isBefore(compareDateTime);
     }
 
     public boolean wasNotBefore(LocalDateTime compareDateTime) {
         return !wasBefore(compareDateTime);
+    }
+
+    public String toString() {
+        return name;
     }
 }

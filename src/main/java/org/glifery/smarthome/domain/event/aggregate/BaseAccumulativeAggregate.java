@@ -3,10 +3,7 @@ package org.glifery.smarthome.domain.event.aggregate;
 import org.glifery.smarthome.domain.event.BaseAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseAccumulativeAggregate extends BaseAggregate {
@@ -32,15 +29,23 @@ public abstract class BaseAccumulativeAggregate extends BaseAggregate {
         }
     }
 
+    public Integer size() {
+        return events.size();
+    }
+
+    public Optional<AbstractEvent> getLast() {
+        return events.size() > 0 ? Optional.of(events.get(events.size() - 1)) : Optional.empty();
+    }
+
     public List<AbstractEvent> getAllByDateAsc() {
         return events.stream()
-                .sorted(Comparator.comparing(AbstractEvent::getDateTime))
+                .sorted(Comparator.comparing(AbstractEvent::getEventDateTime))
                 .collect(Collectors.toList());
     }
 
     public List<AbstractEvent> getAllByDateDesc() {
         return events.stream()
-                .sorted(Comparator.comparing(AbstractEvent::getDateTime).reversed())
+                .sorted(Comparator.comparing(AbstractEvent::getEventDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }

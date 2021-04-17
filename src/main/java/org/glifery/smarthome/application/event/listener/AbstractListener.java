@@ -8,10 +8,10 @@ import java.time.Duration;
 @Slf4j
 public class AbstractListener {
     protected void handleLog(AbstractEvent event) {
-        log.debug(String.format("Handling event: %s (%s)", event.getName(), event.getDateTime()));
+        log.debug(String.format("Handling event: %s (%s)", event.getName(), event.getEventDateTime()));
     }
 
     protected void handleLog(AbstractEvent event, Duration delay) {
-        log.debug(String.format("Handling event: %s (%s) with delay %ss", event.getName(), event.getDateTime(), delay.getSeconds()));
+        log.debug(String.format("Handling event: %s (%s) with delay %ss", event.getName(), event.getEventDateTime(), delay.getSeconds()));
     }
 }

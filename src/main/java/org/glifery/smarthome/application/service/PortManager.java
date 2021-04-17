@@ -35,6 +35,7 @@ public class PortManager {
     private SingleAction normalizeSingleAction(SingleAction singleAction) {
         PortStateAggregate aggregate = new PortStateAggregate(singleAction.getPort());
         aggregate.load(eventSourceInterface);
+
         PortState currentState = aggregate.getCurrentState();
 
         switch (singleAction.getAction()) {

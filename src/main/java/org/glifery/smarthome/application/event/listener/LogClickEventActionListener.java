@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 public class LogClickEventActionListener extends AbstractListener {
 //    @EventListener
     public void handleClickEvent(ClickEvent event) {
-        log.warn(String.format("Log %s event (%s)", event.getName(), event.getDateTime()));
+        log.warn(String.format("Log %s event (%s)", event.getName(), event.getEventDateTime()));
     }
 }
