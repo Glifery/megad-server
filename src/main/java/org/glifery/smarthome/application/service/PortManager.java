@@ -23,13 +23,32 @@ public class PortManager {
     private final EventSourceInterface eventSourceInterface;
 
     public void applyActions(ActionsList actionsList, LocalDateTime dateTime) {
-        log.info(String.format("Execute actions: %s", actionsList.getSingleActions()));
-
         actionsList.getSingleActions().stream()
-                .map(this::normalizeSingleAction)
-                .filter(Objects::nonNull)
-                .map(singleAction -> new ActionEvent(singleAction, dateTime))
-                .forEach(eventRepository::publish);
+                .forEach(singleAction -> applyAction(singleAction, dateTime));
+    }
+
+    public void applyPortState(PortState portState) {
+        SingleAction.Action action = SingleAction.Action.OFF;
+
+        switch (portState.getState()) {
+            case OFF: action = SingleAction.Action.OFF; break;
+            case ON: action = SingleAction.Action.ON; break;
+        }
+
+        SingleAction singleAction = new SingleAction(portState.getPort(), action);
+        applyAction(singleAction, LocalDateTime.now());
+    }
+
+    private void applyAction(SingleAction singleAction, LocalDateTime dateTime) {
+        SingleAction normalizedSingleAction = normalizeSingleAction(singleAction);
+        if (Objects.isNull(normalizedSingleAction)) {
+            return;
+        }
+
+        log.info(String.format("Execute action: %s", normalizedSingleAction));
+
+        ActionEvent actionEvent = new ActionEvent(normalizedSingleAction, dateTime);
+        eventRepository.publish(actionEvent);
     }
 
     private SingleAction normalizeSingleAction(SingleAction singleAction) {

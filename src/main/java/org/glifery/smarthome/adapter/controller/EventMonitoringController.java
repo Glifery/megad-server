@@ -32,7 +32,7 @@ public class EventMonitoringController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<Port> getPorts() {
-        return portRepository.findAll().stream()
+        return portRepository.findAllPorts().stream()
                 .filter(port -> port.getType().equals(Port.Type.input))
                 .collect(Collectors.toList());
     }

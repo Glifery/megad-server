@@ -6,6 +6,8 @@ import org.glifery.smarthome.application.exception.InvalidActionException;
 import org.glifery.smarthome.domain.event.BaseAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
 import org.glifery.smarthome.domain.model.event.ActionEvent;
+import org.glifery.smarthome.domain.model.event.BaseSingleActionAwareEvent;
+import org.glifery.smarthome.domain.model.event.InitialPortStateEvent;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
@@ -23,11 +25,11 @@ public class PortStateAggregate extends BaseAggregate {
 
     @Override
     protected boolean supports(AbstractEvent event) {
-        if (!(event instanceof ActionEvent)) {
+        if (!(event instanceof ActionEvent) && !(event instanceof InitialPortStateEvent)) {
             return false;
         }
 
-        if (!((ActionEvent) event).getSingleAction().getPort().equals(port)) {
+        if (!((BaseSingleActionAwareEvent) event).getSingleAction().getPort().equals(port)) {
             return false;
         }
 

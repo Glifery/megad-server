@@ -43,6 +43,7 @@ public class MegadHttp implements MegadGatewayInterface {
 
     public List<PortState> getAllStates(MegaD megaD) throws IOException {
         String response = doSend(megaD, COMMAND_GET_ALL_STATES);
+        PortStatesConverter.convert(portRepository, megaD, response);
 
         return PortStatesConverter.convert(portRepository, megaD, response);
     }

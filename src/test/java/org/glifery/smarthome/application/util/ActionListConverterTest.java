@@ -23,8 +23,13 @@ public class ActionListConverterTest {
 
     class MegadIdRepository implements ControllerRepositoryInterface {
         @Override
-        public MegaD findMegadId(String megadId) {
+        public MegaD findMegaD(String megadId) {
             return new MegaD(megadId);
+        }
+
+        @Override
+        public List<MegaD> findAllMegaDs() {
+            return new ArrayList<>();
         }
     }
 
@@ -35,7 +40,7 @@ public class ActionListConverterTest {
         }
 
         @Override
-        public List<Port> findAll() {
+        public List<Port> findAllPorts() {
             return new ArrayList<>();
         }
     }
@@ -50,7 +55,7 @@ public class ActionListConverterTest {
     public void testSingleAction() throws IOException {
         String actionString = "7:0";
 
-        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(1);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
@@ -62,7 +67,7 @@ public class ActionListConverterTest {
     public void testMultipleActions() throws IOException {
         String actionString = "7:1;8:2;9:3";
 
-        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(3);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
@@ -80,7 +85,7 @@ public class ActionListConverterTest {
     public void testMultipleActionsWithBar() throws IOException {
         String actionString = "7:1;8:2|9:3";
 
-        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(2);
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
@@ -95,20 +100,20 @@ public class ActionListConverterTest {
     public void testValidationErrorWrongPort() throws IOException {
         String actionString = "7:1;8888:2";
 
-        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
     }
 
     @Test(expected = InvalidActionException.class)
     public void testValidationErrorWrongAction() throws IOException {
         String actionString = "7:1;8:8";
 
-        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
     }
 
     @Test(expected = InvalidActionException.class)
     public void testValidationErrorEmptyAction() throws IOException {
         String actionString = "";
 
-        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
+        ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegaD("megad1"), actionString);
     }
 }

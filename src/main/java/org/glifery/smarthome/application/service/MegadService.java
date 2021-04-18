@@ -2,12 +2,8 @@ package org.glifery.smarthome.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.glifery.smarthome.application.configuration.MegadConfig;
-import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
-import org.glifery.smarthome.application.port.MegadGatewayInterface;
-import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
+import org.glifery.smarthome.application.port.*;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +17,13 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 public class MegadService {
-    private final MegadConfig config;
     private final ControllerRepositoryInterface controllerRepository;
     private final MegadGatewayInterface megadGateway;
-    private final PortStateRepositoryInterface portStateRepository;
+    private final PortManager portManager;
 
     public void updateAllStates() {
-        config.getControllers().entrySet().stream()
-                .flatMap(controllerEntry -> {
-                    MegaD megaD = controllerRepository.findMegadId(controllerEntry.getKey());
+        controllerRepository.findAllMegaDs().stream()
+                .flatMap(megaD -> {
                     try {
                         return megadGateway.getAllStates(megaD).stream();
                     } catch (IOException e) {
@@ -38,7 +32,7 @@ public class MegadService {
 
                     return Stream.empty();
                 })
-                .forEach(portState -> portStateRepository.updatePortState(portState));
+                .forEach(portManager::applyPortState);
 
         log.info("All states have been refreshed");
     }
@@ -48,7 +42,7 @@ public class MegadService {
 
         operations.entrySet().stream().forEach(op -> {
             try {
-                megadGateway.sendCommand(controllerRepository.findMegadId(op.getKey()), op.getValue());
+                megadGateway.sendCommand(controllerRepository.findMegaD(op.getKey()), op.getValue());
             } catch (IOException e) {
                 e.printStackTrace();
             }

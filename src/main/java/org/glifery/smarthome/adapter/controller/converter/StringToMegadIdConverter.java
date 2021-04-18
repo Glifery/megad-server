@@ -11,6 +11,6 @@ public class StringToMegadIdConverter implements Converter<String, MegaD> {
 
     @Override
     public MegaD convert(String megadId) {
-        return controllerRepository.findMegadId(megadId);
+        return controllerRepository.findMegaD(megadId);
     }
 }

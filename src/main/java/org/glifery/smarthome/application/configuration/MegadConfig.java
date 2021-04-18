@@ -57,16 +57,21 @@ public class MegadConfig implements ControllerRepositoryInterface, PortRepositor
     }
 
     @Override
-    public List<Port> findAll() {
+    public List<Port> findAllPorts() {
         return ports;
     }
 
     @Override
-    public MegaD findMegadId(String megadIdName) {
+    public MegaD findMegaD(String megadIdName) {
         return megaDs.stream()
                 .filter(megadId -> megadId.toString().equals(megadIdName))
                 .findFirst()
                 .orElseThrow(() -> new InvalidPortException(String.format("Unable to find megad %s", megadIdName)));
+    }
+
+    @Override
+    public List<MegaD> findAllMegaDs() {
+        return megaDs;
     }
 
     @Data

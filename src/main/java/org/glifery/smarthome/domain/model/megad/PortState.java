@@ -23,4 +23,8 @@ public class PortState {
     public static PortState create(Port port, State state) {
         return new PortState(port, state);
     }
+
+    public String toString() {
+        return String.format("%s:%s", port, state);
+    }
 }

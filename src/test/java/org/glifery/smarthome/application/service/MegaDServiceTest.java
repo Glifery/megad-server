@@ -1,10 +1,8 @@
 package org.glifery.smarthome.application.service;
 
-import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
-import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.Port;
@@ -28,8 +26,13 @@ public class MegaDServiceTest {
 
     class MegadIdRepository implements ControllerRepositoryInterface {
         @Override
-        public MegaD findMegadId(String megadId) {
+        public MegaD findMegaD(String megadId) {
             return new MegaD(megadId);
+        }
+
+        @Override
+        public List<MegaD> findAllMegaDs() {
+            return new ArrayList<>();
         }
     }
 
@@ -40,21 +43,20 @@ public class MegaDServiceTest {
         }
 
         @Override
-        public List<Port> findAll() {
+        public List<Port> findAllPorts() {
             return new ArrayList<>();
         }
     }
 
     @Before
     public void setup() {
-        MegadConfig config = Mockito.mock(MegadConfig.class);
         controllerRepository = new MegadIdRepository();
         portRepository = new PortRepository();
-        PortStateRepositoryInterface portStateRepository = Mockito.mock(PortStateRepositoryInterface.class);
+        PortManager portManager = Mockito.mock(PortManager.class);
 
         megadGateway = Mockito.mock(MegadGatewayInterface.class);
 
-        megadService = new MegadService(config, controllerRepository, megadGateway, portStateRepository);
+        megadService = new MegadService(controllerRepository, megadGateway, portManager);
     }
 
     @Test
@@ -86,7 +88,7 @@ public class MegaDServiceTest {
     private SingleAction createSingleAction(String megadId, Integer port, SingleAction.Action action) {
         return new SingleAction(
                 portRepository.findPort(
-                        controllerRepository.findMegadId(megadId),
+                        controllerRepository.findMegaD(megadId),
                         port
                 ),
                 action

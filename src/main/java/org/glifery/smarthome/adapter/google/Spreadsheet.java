@@ -75,7 +75,7 @@ public class Spreadsheet {
     }
 
     private MegadRange generateRangeForMegad(Map.Entry<String, MegadConfig.ControllerConfig> entry) {
-        MegaD megaD = controllerRepository.findMegadId(entry.getKey());
+        MegaD megaD = controllerRepository.findMegaD(entry.getKey());
 
         String firstColumnLetter = spreadsheetConfig.getMegadPortColumn();
         String lastColumnLetter = spreadsheetConfig.getMegadActionColumn();

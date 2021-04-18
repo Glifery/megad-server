@@ -22,7 +22,7 @@ public class AutoupdatePortState implements AutoupdatePortStateInterface {
 
     @Override
     public void init() {
-        log.info("Initialize auto-updating of port states");
+        log.info(String.format("Initialize auto-updating of port states every %s seconds", config.getAutoupdatePortStateSeconds()));
         Runnable autoupdatePortStateTask = () -> {
             megadService.updateAllStates();
         };
