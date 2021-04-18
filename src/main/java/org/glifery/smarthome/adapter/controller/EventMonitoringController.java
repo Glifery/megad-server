@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -27,11 +28,13 @@ public class EventMonitoringController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/api/ports",
+            value = "/api/ports/input",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<Port> getPorts() {
-        return portRepository.findAll();
+        return portRepository.findAll().stream()
+                .filter(port -> port.getType().equals(Port.Type.input))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(

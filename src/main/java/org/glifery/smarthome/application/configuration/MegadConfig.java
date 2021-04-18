@@ -37,9 +37,13 @@ public class MegadConfig implements ControllerRepositoryInterface, PortRepositor
 
                     megaDs.add(megaD);
 
-                    return stringControllerConfigEntry.getValue().getTitles()
+                    return stringControllerConfigEntry.getValue().getPorts()
                             .entrySet().stream()
-                            .map(integerStringEntry -> new Port(megaD, integerStringEntry.getKey(), integerStringEntry.getValue()));
+                            .map(integerStringEntry -> new Port(
+                                    megaD, integerStringEntry.getKey(),
+                                    integerStringEntry.getValue().getTitle(),
+                                    integerStringEntry.getValue().getType()
+                            ));
                 })
                 .collect(Collectors.toList());
     }
@@ -75,11 +79,17 @@ public class MegadConfig implements ControllerRepositoryInterface, PortRepositor
         private String host;
         private String name;
         private SpreadsheetConfig spreadsheet;
-        private Map<Integer, String> titles;
+        private Map<Integer, PortConfig> ports;
     }
 
     @Data
     public static class SpreadsheetConfig {
         private Integer firstRowForP0;
+    }
+
+    @Data
+    public static class PortConfig {
+        private String title;
+        private Port.Type type;
     }
 }

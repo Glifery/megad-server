@@ -14,6 +14,11 @@ public class Port {
     private static final Integer MIN_PORT = 7;
     private static final Integer MAX_PORT = 13;
 
+    public enum Type {
+        input,
+        output
+    }
+
     @NonNull
     private final MegaD megaD;
 
@@ -22,6 +27,8 @@ public class Port {
     private final Integer number;
 
     private final String title;
+
+    private final Type type;
 
     public String toString() {
         return String.format("%s.%s", megaD, number);

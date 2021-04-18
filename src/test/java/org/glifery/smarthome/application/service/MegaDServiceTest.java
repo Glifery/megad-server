@@ -36,7 +36,7 @@ public class MegaDServiceTest {
     class PortRepository implements PortRepositoryInterface {
         @Override
         public Port findPort(MegaD megaD, Integer port) {
-            return new Port(megaD, port, String.format("%s.%s", megaD, port));
+            return new Port(megaD, port, String.format("%s.%s", megaD, port), Port.Type.input);
         }
 
         @Override

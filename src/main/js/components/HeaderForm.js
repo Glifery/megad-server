@@ -11,7 +11,7 @@ class HeaderForm extends React.Component{
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/ports'})
+        client({method: 'GET', path: '/api/ports/input'})
             .done(response => {
                 this.setState({
                     buttons: response.entity.map(port =>
