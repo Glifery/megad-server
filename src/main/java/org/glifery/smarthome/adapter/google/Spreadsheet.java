@@ -65,7 +65,7 @@ public class Spreadsheet {
 
         // For each MegaD create list of PortActionsList. Example: {megad1: [{port 0: action: 1:1}, {port 0: action: 1:1}], megad2: ...}
         List<List<PortActionsList>> portActionsListsForRanges = IntStream.range(0, response.getValueRanges().size())
-                .mapToObj(index -> generateOperationsForRange(megadRanges.get(index).getMegadId(), response.getValueRanges().get(index)))
+                .mapToObj(index -> generateOperationsForRange(megadRanges.get(index).getMegaD(), response.getValueRanges().get(index)))
                 .collect(Collectors.toList());
 
         // Flattern 'list of list' into 'list'
@@ -75,7 +75,7 @@ public class Spreadsheet {
     }
 
     private MegadRange generateRangeForMegad(Map.Entry<String, MegadConfig.ControllerConfig> entry) {
-        MegadId megadId = controllerRepository.findMegadId(entry.getKey());
+        MegaD megaD = controllerRepository.findMegadId(entry.getKey());
 
         String firstColumnLetter = spreadsheetConfig.getMegadPortColumn();
         String lastColumnLetter = spreadsheetConfig.getMegadActionColumn();
@@ -86,14 +86,14 @@ public class Spreadsheet {
 
         String range = String.format("%s!%s%s:%s%s", tabName, firstColumnLetter, firstRow, lastColumnLetter, lastRow);
 
-        return new MegadRange(megadId, range);
+        return new MegadRange(megaD, range);
     }
 
-    private List<PortActionsList> generateOperationsForRange(MegadId megadId, ValueRange valueRange) {
+    private List<PortActionsList> generateOperationsForRange(MegaD megaD, ValueRange valueRange) {
         return valueRange.getValues().stream()
                 .map(row -> {
                     if (row.size() == 2) {
-                        return generateOperation(megadId, row.get(0).toString(), row.get(1).toString());
+                        return generateOperation(megaD, row.get(0).toString(), row.get(1).toString());
                     }
 
                     return null;
@@ -102,9 +102,9 @@ public class Spreadsheet {
                 .collect(Collectors.toList());
     }
 
-    private PortActionsList generateOperation(MegadId megadId, String initialPortString, String actionString) {
-        Port initialPort = portRepository.findPort(megadId, Integer.parseInt(initialPortString));
-        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, megadId, actionString);
+    private PortActionsList generateOperation(MegaD megaD, String initialPortString, String actionString) {
+        Port initialPort = portRepository.findPort(megaD, Integer.parseInt(initialPortString));
+        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, megaD, actionString);
 
         return new PortActionsList(initialPort, actionsList);
     }

@@ -1,7 +1,7 @@
 package org.glifery.smarthome.adapter.megad.converter;
 
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.PortState;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ public class PortStatesConverter {
     private static String DELIMETER_PORT = ";";
     private static String DELIMETER_STATE = "/";
 
-    public static List<PortState> convert(PortRepositoryInterface portRepository, MegadId megadId, String allStatesResponse) {
+    public static List<PortState> convert(PortRepositoryInterface portRepository, MegaD megaD, String allStatesResponse) {
         List<String> portParts = Arrays.stream(allStatesResponse.split(DELIMETER_PORT)).collect(Collectors.toList());
         List<PortState.State> portStateList = portParts.stream()
                 .map(PortStatesConverter::retrieveStateString)
@@ -21,7 +21,7 @@ public class PortStatesConverter {
                 .collect(Collectors.toList());
 
         return IntStream.range(0, 28)
-                .mapToObj(i -> convertToPortState(portRepository, megadId, i, portStateList.get(i)))
+                .mapToObj(i -> convertToPortState(portRepository, megaD, i, portStateList.get(i)))
                 .collect(Collectors.toList());
     }
 
@@ -39,9 +39,9 @@ public class PortStatesConverter {
         }
     }
 
-    private static PortState convertToPortState(PortRepositoryInterface portRepository, MegadId megadId, Integer port, PortState.State state) {
+    private static PortState convertToPortState(PortRepositoryInterface portRepository, MegaD megaD, Integer port, PortState.State state) {
         return PortState.create(
-                portRepository.findPort(megadId, port),
+                portRepository.findPort(megaD, port),
                 state
         );
     }

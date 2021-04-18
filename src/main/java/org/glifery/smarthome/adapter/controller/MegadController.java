@@ -27,11 +27,11 @@ public class MegadController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/server/{megadId}",
+            value = "/server/{megaD}",
             produces = MediaType.TEXT_HTML_VALUE
     )
     public String input(
-            @PathVariable MegadId megadId,
+            @PathVariable MegaD megaD,
             @RequestParam(name = "pt", required = true) Integer port,
             @RequestParam(name = "click", required = false) ActionIncomingRequest.Type type,
             @RequestParam(name = "cnt", required = false) Integer clickCounter,
@@ -39,7 +39,7 @@ public class MegadController {
             @RequestParam(name = "v", required = false) StatusIncomingRequest.Status portStatus,
             @RequestParam(name = "mdid", required = false) String mdid
     ) {
-        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(portRepository, megadId, port, type, clickCounter, mode, portStatus);
+        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(portRepository, megaD, port, type, clickCounter, mode, portStatus);
 
         log.info(String.format("Incoming HTTP request: %s", incomingRequest));
 

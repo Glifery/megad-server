@@ -15,7 +15,7 @@ public class Port {
     private static final Integer MAX_PORT = 13;
 
     @NonNull
-    private final MegadId megadId;
+    private final MegaD megaD;
 
     @NonNull
     @Range(min = 0, max = 28)
@@ -24,6 +24,6 @@ public class Port {
     private final String title;
 
     public String toString() {
-        return String.format("%s.%s", megadId, number);
+        return String.format("%s.%s", megaD, number);
     }
 }

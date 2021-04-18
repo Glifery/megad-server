@@ -5,7 +5,7 @@ import org.glifery.smarthome.application.exception.InvalidActionException;
 import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class ActionListConverterTest {
@@ -21,15 +23,20 @@ public class ActionListConverterTest {
 
     class MegadIdRepository implements ControllerRepositoryInterface {
         @Override
-        public MegadId findMegadId(String megadId) {
-            return new MegadId(megadId);
+        public MegaD findMegadId(String megadId) {
+            return new MegaD(megadId);
         }
     }
 
     class PortRepository implements PortRepositoryInterface {
         @Override
-        public Port findPort(MegadId megadId, Integer port) {
-            return new Port(megadId, port, String.format("%s.%s", megadId, port));
+        public Port findPort(MegaD megaD, Integer port) {
+            return new Port(megaD, port, String.format("%s.%s", megaD, port));
+        }
+
+        @Override
+        public List<Port> findAll() {
+            return new ArrayList<>();
         }
     }
 
@@ -46,7 +53,7 @@ public class ActionListConverterTest {
         ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(1);
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("megad1.7:OFF");
     }
@@ -58,13 +65,13 @@ public class ActionListConverterTest {
         ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(3);
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("megad1.7:ON");
-        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getNumber()).isEqualTo(8);
         Assertions.assertThat(actionsList.getSingleActions().get(1).toString()).isEqualTo("megad1.8:SWITCH");
-        Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(2).getPort().getNumber()).isEqualTo(9);
         Assertions.assertThat(actionsList.getSingleActions().get(2).toString()).isEqualTo("megad1.9:SYNC");
     }
@@ -76,10 +83,10 @@ public class ActionListConverterTest {
         ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, controllerRepository.findMegadId("megad1"), actionString);
 
         Assertions.assertThat(actionsList.getSingleActions()).hasSize(2);
-        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(0).getPort().getNumber()).isEqualTo(7);
         Assertions.assertThat(actionsList.getSingleActions().get(0).toString()).isEqualTo("megad1.7:ON");
-        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegadId().toString()).isEqualTo("megad1");
+        Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getMegaD().toString()).isEqualTo("megad1");
         Assertions.assertThat(actionsList.getSingleActions().get(1).getPort().getNumber()).isEqualTo(8);
         Assertions.assertThat(actionsList.getSingleActions().get(1).toString()).isEqualTo("megad1.8:SWITCH");
     }

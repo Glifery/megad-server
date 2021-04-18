@@ -7,7 +7,7 @@ import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +29,9 @@ public class MegadService {
     public void updateAllStates() {
         config.getControllers().entrySet().stream()
                 .flatMap(controllerEntry -> {
-                    MegadId megadId = controllerRepository.findMegadId(controllerEntry.getKey());
+                    MegaD megaD = controllerRepository.findMegadId(controllerEntry.getKey());
                     try {
-                        return megadGateway.getAllStates(megadId).stream();
+                        return megadGateway.getAllStates(megaD).stream();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -63,7 +63,7 @@ public class MegadService {
         Map<String, ActionsList> operations = new HashMap<>();
 
         for (SingleAction singleAction : actionsList.getSingleActions()) {
-            String megadId = singleAction.getPort().getMegadId().toString();
+            String megadId = singleAction.getPort().getMegaD().toString();
 
             if (Objects.isNull(operations.get(megadId))) {
                 operations.put(megadId, new ActionsList());

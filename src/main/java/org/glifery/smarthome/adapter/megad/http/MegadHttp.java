@@ -8,7 +8,7 @@ import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.application.util.ActionsListConverter;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.springframework.stereotype.Component;
 import retrofit2.Response;
@@ -41,18 +41,18 @@ public class MegadHttp implements MegadGatewayInterface {
                 ));
     }
 
-    public List<PortState> getAllStates(MegadId megadId) throws IOException {
-        String response = doSend(megadId, COMMAND_GET_ALL_STATES);
+    public List<PortState> getAllStates(MegaD megaD) throws IOException {
+        String response = doSend(megaD, COMMAND_GET_ALL_STATES);
 
-        return PortStatesConverter.convert(portRepository, megadId, response);
+        return PortStatesConverter.convert(portRepository, megaD, response);
     }
 
-    public String sendCommand(MegadId megadId, ActionsList actionsList) throws IOException {
-        return doSend(megadId, ActionsListConverter.toMegadCommand(actionsList));
+    public String sendCommand(MegaD megaD, ActionsList actionsList) throws IOException {
+        return doSend(megaD, ActionsListConverter.toMegadCommand(actionsList));
     }
 
-    private String doSend(MegadId megadId, String command) throws IOException {
-        MegadHttpApi megadHttpApi = getApiById(megadId);
+    private String doSend(MegaD megaD, String command) throws IOException {
+        MegadHttpApi megadHttpApi = getApiById(megaD);
         Response<String> response = megadHttpApi.sendCommand(megadConfig.getCommon().getPassword(), command).execute();
 
         if (!response.isSuccessful()) {
@@ -62,8 +62,8 @@ public class MegadHttp implements MegadGatewayInterface {
         return response.body();
     }
 
-    private MegadHttpApi getApiById(MegadId megadId) throws RuntimeException {
-        return Optional.ofNullable(apis.get(megadId.toString())).orElseThrow(() -> new RuntimeException(String.format("Api for %s not found", megadId)));
+    private MegadHttpApi getApiById(MegaD megaD) throws RuntimeException {
+        return Optional.ofNullable(apis.get(megaD.toString())).orElseThrow(() -> new RuntimeException(String.format("Api for %s not found", megaD)));
     }
 
     private MegadHttpApi createApi(MegadConfig.ControllerConfig config) {

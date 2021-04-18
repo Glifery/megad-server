@@ -45,7 +45,7 @@
 
                 $(document).on('mousedown mouseup', '.data-switch', (event) => {
                     var $this = $(event.target);
-                    var megadId = $this.data('megad');
+                    var megaD = $this.data('megad');
                     var port = $this.data('port');
                     var input = {pt: port};
 
@@ -54,7 +54,7 @@
                     }
 
                     $.get(
-                        `/server/${megadId}`,
+                        `/server/${megaD}`,
                         input
                     );
                 });

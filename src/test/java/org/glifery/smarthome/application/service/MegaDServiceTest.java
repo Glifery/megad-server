@@ -6,7 +6,7 @@ import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.junit.Before;
@@ -16,9 +16,11 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(JUnit4.class)
-public class MegadServiceTest {
+public class MegaDServiceTest {
     private MegadGatewayInterface megadGateway;
     private MegadService megadService;
     private ControllerRepositoryInterface controllerRepository;
@@ -26,15 +28,20 @@ public class MegadServiceTest {
 
     class MegadIdRepository implements ControllerRepositoryInterface {
         @Override
-        public MegadId findMegadId(String megadId) {
-            return new MegadId(megadId);
+        public MegaD findMegadId(String megadId) {
+            return new MegaD(megadId);
         }
     }
 
     class PortRepository implements PortRepositoryInterface {
         @Override
-        public Port findPort(MegadId megadId, Integer port) {
-            return new Port(megadId, port, String.format("%s.%s", megadId, port));
+        public Port findPort(MegaD megaD, Integer port) {
+            return new Port(megaD, port, String.format("%s.%s", megaD, port));
+        }
+
+        @Override
+        public List<Port> findAll() {
+            return new ArrayList<>();
         }
     }
 
@@ -60,7 +67,7 @@ public class MegadServiceTest {
 
         megadService.sendCommand(actionsListInput);
 
-        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
+        Mockito.verify(megadGateway, Mockito.times(2)).sendCommand(Mockito.any(MegaD.class), Mockito.any(ActionsList.class));
     }
 
     @Test
@@ -73,7 +80,7 @@ public class MegadServiceTest {
 
         megadService.sendCommand(actionsListInput);
 
-        Mockito.verify(megadGateway, Mockito.times(1)).sendCommand(Mockito.any(MegadId.class), Mockito.any(ActionsList.class));
+        Mockito.verify(megadGateway, Mockito.times(1)).sendCommand(Mockito.any(MegaD.class), Mockito.any(ActionsList.class));
     }
 
     private SingleAction createSingleAction(String megadId, Integer port, SingleAction.Action action) {

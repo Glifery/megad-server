@@ -4,7 +4,7 @@ import lombok.Data;
 import org.glifery.smarthome.application.exception.InvalidPortException;
 import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
-import org.glifery.smarthome.domain.model.megad.MegadId;
+import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class MegadConfig implements ControllerRepositoryInterface, PortRepositoryInterface {
     private CommonConfig common;
     private Map<String, ControllerConfig> controllers;
-    private List<MegadId> megadIds;
+    private List<MegaD> megaDs;
     private List<Port> ports;
 
     public void setCommon(CommonConfig common) {
@@ -30,31 +30,36 @@ public class MegadConfig implements ControllerRepositoryInterface, PortRepositor
     public void setControllers(Map<String, ControllerConfig> controllers) {
         this.controllers = controllers;
 
-        this.megadIds = new ArrayList<>();
+        this.megaDs = new ArrayList<>();
         this.ports = controllers.entrySet().stream()
                 .flatMap(stringControllerConfigEntry -> {
-                    MegadId megadId = new MegadId(stringControllerConfigEntry.getKey());
+                    MegaD megaD = new MegaD(stringControllerConfigEntry.getKey());
 
-                    megadIds.add(megadId);
+                    megaDs.add(megaD);
 
                     return stringControllerConfigEntry.getValue().getTitles()
                             .entrySet().stream()
-                            .map(integerStringEntry -> new Port(megadId, integerStringEntry.getKey(), integerStringEntry.getValue()));
+                            .map(integerStringEntry -> new Port(megaD, integerStringEntry.getKey(), integerStringEntry.getValue()));
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Port findPort(MegadId megadId, Integer portNumber) {
+    public Port findPort(MegaD megaD, Integer portNumber) {
         return ports.stream()
-                .filter(port -> port.getMegadId().equals(megadId) && port.getNumber().equals(portNumber))
+                .filter(port -> port.getMegaD().equals(megaD) && port.getNumber().equals(portNumber))
                 .findFirst()
-                .orElseThrow(() -> new InvalidPortException(String.format("Unable to find port %s.%s", megadId, portNumber)));
+                .orElseThrow(() -> new InvalidPortException(String.format("Unable to find port %s.%s", megaD, portNumber)));
     }
 
     @Override
-    public MegadId findMegadId(String megadIdName) {
-        return megadIds.stream()
+    public List<Port> findAll() {
+        return ports;
+    }
+
+    @Override
+    public MegaD findMegadId(String megadIdName) {
+        return megaDs.stream()
                 .filter(megadId -> megadId.toString().equals(megadIdName))
                 .findFirst()
                 .orElseThrow(() -> new InvalidPortException(String.format("Unable to find megad %s", megadIdName)));

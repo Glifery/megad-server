@@ -18,7 +18,7 @@ class App extends React.Component {
     updateEvents() {
         let params = this.state.latestEventDate ? {start_date: this.state.latestEventDate} : null;
 
-        client({method: 'GET', path: '/api/monitoring/events', params: params})
+        client({method: 'GET', path: '/api/events', params: params})
             .done(response => {
                 this.setState({
                     events: this.state.events.concat(response.entity),

@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class MegadIncomingRequestConverter {
-    public static IncomingRequest createFromServerRequest(PortRepositoryInterface config, MegadId megadId, Integer portNumber, ActionIncomingRequest.Type type, Integer clickCounter, ActionIncomingRequest.Mode mode, StatusIncomingRequest.Status status) {
-        Port port = config.findPort(megadId, portNumber);
+    public static IncomingRequest createFromServerRequest(PortRepositoryInterface config, MegaD megaD, Integer portNumber, ActionIncomingRequest.Type type, Integer clickCounter, ActionIncomingRequest.Mode mode, StatusIncomingRequest.Status status) {
+        Port port = config.findPort(megaD, portNumber);
 
         if (Objects.nonNull(status)) {
             return new StatusIncomingRequest(port, status);
