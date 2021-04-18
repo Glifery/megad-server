@@ -21,13 +21,7 @@ public class Port {
     @Range(min = 0, max = 28)
     private final Integer number;
 
-    public static Port create(String megadId, Integer port) {
-        return new Port(new MegadId(megadId), port);
-    }
-
-    public boolean equals(Port port) {
-        return this.megadId.equals(port.getMegadId()) && this.number.equals(port.getNumber());
-    }
+    private final String title;
 
     public String toString() {
         return String.format("%s.%s", megadId, number);

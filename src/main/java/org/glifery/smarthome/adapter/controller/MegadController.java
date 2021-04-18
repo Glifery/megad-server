@@ -6,6 +6,7 @@ import org.glifery.smarthome.adapter.controller.util.MegadIncomingRequestConvert
 import org.glifery.smarthome.application.configuration.ApplicationConfig;
 import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
+import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.megad.*;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ public class MegadController {
     private static String empty = "";
 
     private final ApplicationConfig applicationConfig;
+    private final PortRepositoryInterface portRepository;
     private final PortActionsRepositoryInterface portActionsRepository;
     private final EventStoreInterface eventRepository;
 
@@ -37,7 +39,7 @@ public class MegadController {
             @RequestParam(name = "v", required = false) StatusIncomingRequest.Status portStatus,
             @RequestParam(name = "mdid", required = false) String mdid
     ) {
-        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(megadId, port, type, clickCounter, mode, portStatus);
+        IncomingRequest incomingRequest = MegadIncomingRequestConverter.createFromServerRequest(portRepository, megadId, port, type, clickCounter, mode, portStatus);
 
         log.info(String.format("Incoming HTTP request: %s", incomingRequest));
 

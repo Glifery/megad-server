@@ -39,10 +39,6 @@ public class SingleAction {
     @NonNull
     private final Action action;
 
-    public static SingleAction create(String megadId, Integer port, Action action) {
-        return new SingleAction(new Port(new MegadId(megadId), port), action);
-    }
-
     public static SingleAction copyWithAction(SingleAction singleAction, Action action) {
         return new SingleAction(singleAction.getPort(), action);
     }

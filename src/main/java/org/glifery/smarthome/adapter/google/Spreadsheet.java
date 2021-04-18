@@ -6,7 +6,9 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import org.glifery.smarthome.adapter.google.model.MegadRange;
 import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.configuration.SpreadsheetConfig;
+import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.PortActionsRepositoryInterface;
+import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.application.util.ActionsListConverter;
 import org.glifery.smarthome.domain.model.megad.*;
 import org.springframework.stereotype.Component;
@@ -23,12 +25,22 @@ public class Spreadsheet {
 
     private final SpreadsheetConfig spreadsheetConfig;
     private final MegadConfig megadConfig;
+    private final ControllerRepositoryInterface controllerRepository;
+    private final PortRepositoryInterface portRepository;
     private final PortActionsRepositoryInterface portActionsRepository;
     private final Sheets sheets;
 
-    public Spreadsheet(SpreadsheetConfig spreadsheetConfig, MegadConfig megadConfig, PortActionsRepositoryInterface portActionsRepository) throws IOException, GeneralSecurityException {
+    public Spreadsheet(
+            SpreadsheetConfig spreadsheetConfig,
+            MegadConfig megadConfig,
+            ControllerRepositoryInterface controllerRepository,
+            PortRepositoryInterface portRepository,
+            PortActionsRepositoryInterface portActionsRepository
+    ) throws IOException, GeneralSecurityException {
         this.spreadsheetConfig = spreadsheetConfig;
         this.megadConfig = megadConfig;
+        this.controllerRepository = controllerRepository;
+        this.portRepository = portRepository;
         this.portActionsRepository = portActionsRepository;
 
         this.sheets = SheetsServiceUtil.getSheetsService(spreadsheetConfig);
@@ -63,7 +75,7 @@ public class Spreadsheet {
     }
 
     private MegadRange generateRangeForMegad(Map.Entry<String, MegadConfig.ControllerConfig> entry) {
-        MegadId megadId = new MegadId(entry.getKey());
+        MegadId megadId = controllerRepository.findMegadId(entry.getKey());
 
         String firstColumnLetter = spreadsheetConfig.getMegadPortColumn();
         String lastColumnLetter = spreadsheetConfig.getMegadActionColumn();
@@ -91,8 +103,8 @@ public class Spreadsheet {
     }
 
     private PortActionsList generateOperation(MegadId megadId, String initialPortString, String actionString) {
-        Port initialPort = new Port(megadId, Integer.parseInt(initialPortString));
-        ActionsList actionsList = ActionsListConverter.fromActionString(megadId, actionString);
+        Port initialPort = portRepository.findPort(megadId, Integer.parseInt(initialPortString));
+        ActionsList actionsList = ActionsListConverter.fromActionString(portRepository, megadId, actionString);
 
         return new PortActionsList(initialPort, actionsList);
     }

@@ -3,6 +3,7 @@ package org.glifery.smarthome.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.configuration.MegadConfig;
+import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
 import org.glifery.smarthome.application.port.PortStateRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
@@ -21,13 +22,14 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class MegadService {
     private final MegadConfig config;
+    private final ControllerRepositoryInterface controllerRepository;
     private final MegadGatewayInterface megadGateway;
     private final PortStateRepositoryInterface portStateRepository;
 
     public void updateAllStates() {
         config.getControllers().entrySet().stream()
                 .flatMap(controllerEntry -> {
-                    MegadId megadId = new MegadId(controllerEntry.getKey());
+                    MegadId megadId = controllerRepository.findMegadId(controllerEntry.getKey());
                     try {
                         return megadGateway.getAllStates(megadId).stream();
                     } catch (IOException e) {
@@ -46,7 +48,7 @@ public class MegadService {
 
         operations.entrySet().stream().forEach(op -> {
             try {
-                megadGateway.sendCommand(new MegadId(op.getKey()), op.getValue());
+                megadGateway.sendCommand(controllerRepository.findMegadId(op.getKey()), op.getValue());
             } catch (IOException e) {
                 e.printStackTrace();
             }

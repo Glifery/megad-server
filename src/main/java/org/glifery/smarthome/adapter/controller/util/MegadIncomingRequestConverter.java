@@ -1,13 +1,14 @@
 package org.glifery.smarthome.adapter.controller.util;
 
+import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.*;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class MegadIncomingRequestConverter {
-    public static IncomingRequest createFromServerRequest(MegadId megadId, Integer portNumber, ActionIncomingRequest.Type type, Integer clickCounter, ActionIncomingRequest.Mode mode, StatusIncomingRequest.Status status) {
-        Port port = new Port(megadId, portNumber);
+    public static IncomingRequest createFromServerRequest(PortRepositoryInterface config, MegadId megadId, Integer portNumber, ActionIncomingRequest.Type type, Integer clickCounter, ActionIncomingRequest.Mode mode, StatusIncomingRequest.Status status) {
+        Port port = config.findPort(megadId, portNumber);
 
         if (Objects.nonNull(status)) {
             return new StatusIncomingRequest(port, status);

@@ -1,9 +1,9 @@
 package org.glifery.smarthome.application.util;
 
 import org.glifery.smarthome.application.exception.InvalidActionException;
+import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.MegadId;
-import org.glifery.smarthome.domain.model.megad.Port;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
 
 import javax.validation.ConstraintViolation;
@@ -17,11 +17,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ActionsListConverter {
-    public static ActionsList fromActionString(MegadId megadId, String actionString) {
+    public static ActionsList fromActionString(PortRepositoryInterface config, MegadId megadId, String actionString) {
         List<String> singleActionStrings = splitBySingleActionStrings(filterOnlySimpleClick(actionString));
 
         ActionsList actionsList = new ActionsList();
-        singleActionStrings.stream().forEach(singleActionString -> actionsList.getSingleActions().add(createSingleActionFromActionString(megadId, singleActionString)));
+        singleActionStrings.stream().forEach(singleActionString -> actionsList.getSingleActions().add(createSingleActionFromActionString(config, megadId, singleActionString)));
 
         validateActionsList(actionsList, actionString);
 
@@ -62,7 +62,7 @@ public class ActionsListConverter {
         }};
     }
 
-    private static SingleAction createSingleActionFromActionString(MegadId megadId, String actionString) {
+    private static SingleAction createSingleActionFromActionString(PortRepositoryInterface config, MegadId megadId, String actionString) {
         List<String> portAndAction = Arrays.stream(actionString.split(":")).collect(Collectors.toList());
 
         if (portAndAction.size() != 2) {
@@ -73,8 +73,12 @@ public class ActionsListConverter {
             Integer portNumber = Integer.parseInt(portAndAction.get(0));
             Integer actionCode = Integer.parseInt(portAndAction.get(1));
 
+            if (!SingleAction.actionMap.containsKey(actionCode)) {
+                throw new InvalidActionException(String.format("Unable to parse MegaD action '%s': action is not supported", actionString));
+            }
+
             SingleAction singleAction = new SingleAction(
-                    new Port(megadId, portNumber),
+                    config.findPort(megadId, portNumber),
                     SingleAction.actionMap.get(actionCode)
             );
 

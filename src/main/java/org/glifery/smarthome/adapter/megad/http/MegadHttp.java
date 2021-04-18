@@ -5,6 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.glifery.smarthome.adapter.megad.converter.PortStatesConverter;
 import org.glifery.smarthome.application.configuration.MegadConfig;
 import org.glifery.smarthome.application.port.MegadGatewayInterface;
+import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.application.util.ActionsListConverter;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
 import org.glifery.smarthome.domain.model.megad.MegadId;
@@ -26,10 +27,12 @@ public class MegadHttp implements MegadGatewayInterface {
     private static String COMMAND_GET_ALL_STATES = "all";
 
     private MegadConfig megadConfig;
+    private PortRepositoryInterface portRepository;
     private Map<String, MegadHttpApi> apis;
 
-    public MegadHttp(MegadConfig megadConfig) {
+    public MegadHttp(MegadConfig megadConfig, PortRepositoryInterface portRepository) {
         this.megadConfig = megadConfig;
+        this.portRepository = portRepository;
         this.apis = megadConfig.getControllers()
                 .entrySet().stream()
                 .collect(Collectors.toMap(
@@ -41,7 +44,7 @@ public class MegadHttp implements MegadGatewayInterface {
     public List<PortState> getAllStates(MegadId megadId) throws IOException {
         String response = doSend(megadId, COMMAND_GET_ALL_STATES);
 
-        return PortStatesConverter.convert(megadId, response);
+        return PortStatesConverter.convert(portRepository, megadId, response);
     }
 
     public String sendCommand(MegadId megadId, ActionsList actionsList) throws IOException {
