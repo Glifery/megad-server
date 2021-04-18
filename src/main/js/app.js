@@ -20,8 +20,12 @@ class App extends React.Component {
 
         client({method: 'GET', path: '/api/events', params: params})
             .done(response => {
+                response.entity.forEach(event => {
+                    this.state.events.unshift(event);
+                })
+
                 this.setState({
-                    events: this.state.events.concat(response.entity),
+                    events: this.state.events,
                     latestEventDate: response.entity.length ? response.entity[response.entity.length - 1].create_date_time : this.state.latestEventDate
                 });
             });
