@@ -8,6 +8,7 @@ import org.glifery.smarthome.application.port.EventSourceInterface;
 import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
 import org.glifery.smarthome.domain.event.aggregate.AllFromDateAggregate;
+import org.glifery.smarthome.domain.event.aggregate.PortStateAggregate;
 import org.glifery.smarthome.domain.event.aggregate.PortStatesAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
 import org.glifery.smarthome.domain.model.event.ActionEvent;
@@ -52,6 +53,21 @@ public class ApiController {
         portStatesAggregate.load(eventSource);
 
         return portStatesAggregate.getCurrentStates();
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/api/ports/states/{megaD}/{port}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public PortState getPortState(
+            @PathVariable MegaD megaD,
+            @PathVariable Integer port
+    ) {
+        PortStateAggregate portStateAggregate = new PortStateAggregate(portRepository.findPort(megaD, port));
+        portStateAggregate.load(eventSource);
+
+        return portStateAggregate.getCurrentState();
     }
 
     @RequestMapping(

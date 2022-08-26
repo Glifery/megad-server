@@ -7,8 +7,8 @@ class MegaDSwitchButton extends React.Component{
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleClick(megadId, port, event) {
-        let input = {pt: port};
+    handleClick(event) {
+        let input = {pt: this.props.port};
 
         if (event == 'mouseup') {
             input.m = 1;
@@ -16,7 +16,7 @@ class MegaDSwitchButton extends React.Component{
 
         client({
             method: 'GET',
-            path: `/server/${megadId}`,
+            path: `/server/${this.props.megaD}`,
             params: input
         });
     }
@@ -24,8 +24,8 @@ class MegaDSwitchButton extends React.Component{
     render() {
         return (
             <button className="btn btn-primary data-switch" type="button" data-megad={this.props.megaD} data-port={this.props.port}
-                    onMouseDown={() => {this.handleClick(this.props.megaD, this.props.port, "mousedown")}}
-                    onMouseUp={() => {this.handleClick(this.props.megaD, this.props.port, "mouseup")}}
+                    onMouseDown={() => {this.handleClick("mousedown")}}
+                    onMouseUp={() => {this.handleClick("mouseup")}}
             >{this.props.title}
             </button>
         )

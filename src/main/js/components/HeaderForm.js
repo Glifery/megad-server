@@ -12,20 +12,20 @@ class HeaderForm extends React.Component{
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/ports'})
-            .done(response => {
+        client({method: 'GET', path: '/api/ports/states'})
+            .then(response => {
                 let ports = {
                     input: {},
                     output: {}
                 };
 
-                response.entity.forEach(port => {
-                    switch (port.type) {
+                Object.entries(response.entity).forEach(([name, port]) => {
+                    switch (port.port.type) {
                         case 'input':
-                            ports.input[`${port.mega_d.id}.${port.number}`] = <MegaDSwitchButton key={port.mega_d.id + port.number} megaD={port.mega_d.id} port={port.number} title={port.title} />;
+                            ports.input[name] = <MegaDSwitchButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} />;
                             break;
                         case 'output':
-                            ports.output[`${port.mega_d.id}.${port.number}`] = <MegaDLightButton key={port.mega_d.id + port.number} megaD={port.mega_d.id} port={port.number} title={port.title} />;
+                            ports.output[name] = <MegaDLightButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} state={port.state} />;
                             break;
                     }
                 })
@@ -47,12 +47,12 @@ class HeaderForm extends React.Component{
     render() {
         return (
             <div className="container">
-                <div className="row">
-                    <div className="col-sm">
-                        { this.state.ports ?
+                { this.state.ports ?
+                    <div className="row">
+                        <div className="col-sm-4">
                             <div className="card">
                                 <div className="card-body">
-                                    <h5 className="card-title">Прихожая</h5>
+                                    <h5 className="card-title">Выключатели</h5>
                                     <div className="d-grid gap-2">
                                         {this.renderSwitchButton('megad1', 0)}
                                         {this.renderSwitchButton('megad1', 1)}
@@ -60,30 +60,94 @@ class HeaderForm extends React.Component{
                                     </div>
                                 </div>
                             </div>
-                        : ''}
-                    </div>
-                    <div className="col-sm">
-                        { this.state.ports ?
+                        </div>
+                        <div className="col-sm-4">
                             <div className="card">
                                 <div className="card-body">
                                     <h5 className="card-title">Прихожая</h5>
                                     <div className="d-grid gap-2">
-                                        {this.renderLightButton('megad1', 24)}
                                         {this.renderLightButton('megad1', 25)}
                                         {this.renderLightButton('megad1', 7)}
                                         {this.renderLightButton('megad1', 13)}
                                     </div>
                                 </div>
                             </div>
-                        : ''}
-                    </div>
-                    <div className="col-sm">
-                        <div className="d-grid gap-2">
-                            <button className="btn btn-primary" type="button">Button</button>
-                            <button className="btn btn-primary" type="button">Button</button>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Кухня</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad1', 10)}
+                                        {this.renderLightButton('megad1', 8)}
+                                        {this.renderLightButton('megad1', 12)}
+                                        {this.renderLightButton('megad1', 23)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Гостиная</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad1', 27)}
+                                        {this.renderLightButton('megad1', 9)}
+                                        {this.renderLightButton('megad1', 22)}
+                                        {this.renderLightButton('megad1', 28)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Санузел</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad2', 13)}
+                                        {this.renderLightButton('megad2', 7)}
+                                        {this.renderLightButton('megad2', 24)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Кабинет</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad2', 10)}
+                                        {this.renderLightButton('megad2', 23)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Спальня</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad2', 25)}
+                                        {this.renderLightButton('megad2', 9)}
+                                        {this.renderLightButton('megad2', 28)}
+                                        {this.renderLightButton('megad2', 27)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Прочее</h5>
+                                    <div className="d-grid gap-2">
+                                        {this.renderLightButton('megad2', 22)}
+                                        {this.renderLightButton('megad2', 12)}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    : ''}
             </div>
         )
     }
