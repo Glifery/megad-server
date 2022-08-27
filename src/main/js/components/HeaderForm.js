@@ -7,11 +7,17 @@ class HeaderForm extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            ports: null
+            ports: {
+                input: {},
+                output: {}
+            },
+            portStates: {}
         };
     }
 
     componentDidMount() {
+        setInterval(this.syncPortStates.bind(this), 1000);
+
         client({method: 'GET', path: '/api/ports/states'})
             .then(response => {
                 let ports = {
@@ -25,7 +31,7 @@ class HeaderForm extends React.Component{
                             ports.input[name] = <MegaDSwitchButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} />;
                             break;
                         case 'output':
-                            ports.output[name] = <MegaDLightButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} state={port.state} />;
+                            ports.output[name] = <MegaDLightButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} state={port.state} ref={React.createRef()} />;
                             break;
                     }
                 })
@@ -33,6 +39,21 @@ class HeaderForm extends React.Component{
                 this.setState({
                     ports: ports,
                 });
+            });
+    }
+
+    syncPortStates() {
+        client({method: 'GET', path: '/api/ports/states'})
+            .done(response => {
+                Object.entries(response.entity).forEach(([name, port]) => {
+                    if (port.port.type != "output") {
+                        return;
+                    }
+                    if (this.state.ports.output[name].ref.current == null) {
+                        return;
+                    }
+                    this.state.ports.output[name].ref.current.syncPortState(port.state)
+                })
             });
     }
 

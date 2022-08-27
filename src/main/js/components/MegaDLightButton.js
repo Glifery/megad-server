@@ -8,6 +8,7 @@ class MegaDLightButton extends React.Component{
             state: props.state
         };
         this.handleClick = this.handleClick.bind(this);
+        this.syncPortState = this.syncPortState.bind(this);
     }
 
     handleClick() {
@@ -20,6 +21,13 @@ class MegaDLightButton extends React.Component{
             .then(response => {
                 this.setState({state: response.entity.state})
             });
+    }
+
+    syncPortState(state) {
+        if (this.state.state != state) {
+            console.log(`Change port state for ${this.props.megaD}.${this.props.port}: ${this.state.state} >> ${state}`)
+            this.setState({state: state});
+        }
     }
 
     render() {
