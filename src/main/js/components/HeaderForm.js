@@ -28,7 +28,7 @@ class HeaderForm extends React.Component{
                 Object.entries(response.entity).forEach(([name, port]) => {
                     switch (port.port.type) {
                         case 'input':
-                            ports.input[name] = <MegaDSwitchButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} />;
+                            ports.input[name] = <MegaDSwitchButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} onClickDone={this.syncPortStates.bind(this)} />;
                             break;
                         case 'output':
                             ports.output[name] = <MegaDLightButton key={name} megaD={port.port.mega_d.id} port={port.port.number} title={port.port.title} state={port.state} ref={React.createRef()} />;

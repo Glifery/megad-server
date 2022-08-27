@@ -18,7 +18,7 @@ class MegaDSwitchButton extends React.Component{
             method: 'GET',
             path: `/server/${this.props.megaD}`,
             params: input
-        });
+        }).done(this.props.onClickDone);
     }
 
     render() {
