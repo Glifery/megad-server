@@ -3,11 +3,11 @@ package org.glifery.smarthome.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.exception.InvalidActionException;
-import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.application.port.EventSourceInterface;
+import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.domain.event.aggregate.PortStateAggregate;
-import org.glifery.smarthome.domain.model.event.ActionEvent;
-import org.glifery.smarthome.domain.model.megad.ActionsList;
+import org.glifery.smarthome.domain.model.event.PortStateActionChangeEvent;
+import org.glifery.smarthome.domain.model.event.PortStateActionEvent;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
 import org.springframework.stereotype.Component;
@@ -19,15 +19,10 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class PortManager {
-    private final EventStoreInterface eventRepository;
+    private final EventStoreInterface eventStore;
     private final EventSourceInterface eventSourceInterface;
 
-    public void applyActions(ActionsList actionsList, LocalDateTime dateTime) {
-        actionsList.getSingleActions().stream()
-                .forEach(singleAction -> applyAction(singleAction, dateTime));
-    }
-
-    public void applyPortState(PortState portState) {
+    public void syncPortState(PortState portState) {
         SingleAction.Action action;
 
         switch (portState.getState()) {
@@ -36,22 +31,26 @@ public class PortManager {
         }
 
         SingleAction singleAction = new SingleAction(portState.getPort(), action);
-        applyAction(singleAction, LocalDateTime.now());
-    }
-
-    private void applyAction(SingleAction singleAction, LocalDateTime dateTime) {
-        SingleAction normalizedSingleAction = normalizeSingleAction(singleAction);
-        if (Objects.isNull(normalizedSingleAction)) {
+        SingleAction actualizedSingleAction = actualizeSingleAction(singleAction);
+        if (Objects.isNull(actualizedSingleAction)) {
             return;
         }
 
-        log.info(String.format("Execute action: %s", normalizedSingleAction));
-
-        ActionEvent actionEvent = new ActionEvent(normalizedSingleAction, dateTime);
-        eventRepository.publish(actionEvent);
+        PortStateActionEvent portStateActionEvent = new PortStateActionEvent(actualizedSingleAction, LocalDateTime.now());
+        eventStore.publish(portStateActionEvent);
     }
 
-    private SingleAction normalizeSingleAction(SingleAction singleAction) {
+    public void applyAction(SingleAction singleAction, LocalDateTime dateTime) {
+        SingleAction actualizedSingleAction = actualizeSingleAction(singleAction);
+        if (Objects.isNull(actualizedSingleAction)) {
+            return;
+        }
+
+        PortStateActionChangeEvent portStateChangeActionEvent = new PortStateActionChangeEvent(actualizedSingleAction, dateTime);
+        eventStore.publish(portStateChangeActionEvent);
+    }
+
+    private SingleAction actualizeSingleAction(SingleAction singleAction) {
         PortStateAggregate aggregate = new PortStateAggregate(singleAction.getPort());
         aggregate.load(eventSourceInterface);
 

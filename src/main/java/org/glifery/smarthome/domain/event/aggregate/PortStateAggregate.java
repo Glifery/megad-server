@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.application.exception.InvalidActionException;
 import org.glifery.smarthome.domain.event.BaseAggregate;
-import org.glifery.smarthome.domain.model.event.AbstractEvent;
-import org.glifery.smarthome.domain.model.event.ActionEvent;
-import org.glifery.smarthome.domain.model.event.BaseSingleActionAwareEvent;
-import org.glifery.smarthome.domain.model.event.InitialPortStateEvent;
+import org.glifery.smarthome.domain.model.event.*;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.glifery.smarthome.domain.model.megad.PortState;
 import org.glifery.smarthome.domain.model.megad.SingleAction;
@@ -25,11 +22,11 @@ public class PortStateAggregate extends BaseAggregate {
 
     @Override
     protected boolean supports(AbstractEvent event) {
-        if (!(event instanceof ActionEvent) && !(event instanceof InitialPortStateEvent)) {
+        if (!isPortStateRelated(event)) {
             return false;
         }
 
-        if (!((BaseSingleActionAwareEvent) event).getSingleAction().getPort().equals(port)) {
+        if (!isCurrentPortRelated(event)) {
             return false;
         }
 
@@ -39,8 +36,16 @@ public class PortStateAggregate extends BaseAggregate {
     @Override
     protected void on(AbstractEvent event) {
         currentState.setState(
-                getNewState(((ActionEvent) event).getSingleAction())
+                getNewState(((PortStateActionEvent) event).getSingleAction())
         );
+    }
+
+    private boolean isPortStateRelated(AbstractEvent event) {
+        return ((event instanceof PortStateActionEvent) || (event instanceof InitialPortStateEvent));
+    }
+
+    private boolean isCurrentPortRelated(AbstractEvent event) {
+        return ((BaseSingleActionAwareEvent) event).getSingleAction().getPort().equals(port);
     }
 
     private PortState.State getNewState(SingleAction singleAction) {

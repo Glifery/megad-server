@@ -32,7 +32,7 @@ public class MegadService {
 
                     return Stream.empty();
                 })
-                .forEach(portManager::applyPortState);
+                .forEach(portManager::syncPortState);
 
         log.info("All states have been refreshed");
     }

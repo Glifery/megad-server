@@ -68,7 +68,7 @@ public class MegadHttp implements MegadGatewayInterface {
     }
 
     private MegadHttpApi createApi(MegadConfig.ControllerConfig config) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(2, TimeUnit.SECONDS)

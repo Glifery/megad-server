@@ -52,11 +52,12 @@ class HeaderForm extends React.Component{
                         <div className="col-sm-4">
                             <div className="card">
                                 <div className="card-body">
-                                    <h5 className="card-title">Выключатели</h5>
+                                    <h5 className="card-title">Эмуляция выключателей</h5>
                                     <div className="d-grid gap-2">
                                         {this.renderSwitchButton('megad1', 0)}
                                         {this.renderSwitchButton('megad1', 1)}
                                         {this.renderSwitchButton('megad1', 2)}
+                                        {this.renderSwitchButton('megad2', 18)}
                                     </div>
                                 </div>
                             </div>

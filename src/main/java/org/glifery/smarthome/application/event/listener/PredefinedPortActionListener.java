@@ -6,7 +6,6 @@ import org.glifery.smarthome.adapter.memory.PortActionsRepository;
 import org.glifery.smarthome.application.service.PortManager;
 import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
-import org.glifery.smarthome.domain.model.megad.Port;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -30,12 +29,13 @@ public class PredefinedPortActionListener extends AbstractListener {
 
         handleLog(event);
 
-        Port port = event.getPort();
+        ActionsList predefinedActionsList = portActionsRepository.getActionsList(event.getPort());
 
-        ActionsList predefinedActionsList = portActionsRepository.getActionsList(port);
-
-        if (Objects.nonNull(predefinedActionsList)) {
-            portManager.applyActions(predefinedActionsList, event.getEventDateTime());
+        if (Objects.isNull(predefinedActionsList)) {
+            return;
         }
+
+        predefinedActionsList.getSingleActions().stream()
+                .forEach(singleAction -> portManager.applyAction(singleAction, event.getEventDateTime()));
     }
 }

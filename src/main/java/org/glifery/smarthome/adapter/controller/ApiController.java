@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.glifery.smarthome.adapter.controller.request.PostActionEventRequest;
 import org.glifery.smarthome.application.port.ControllerRepositoryInterface;
 import org.glifery.smarthome.application.port.EventSourceInterface;
-import org.glifery.smarthome.application.port.EventStoreInterface;
 import org.glifery.smarthome.application.port.PortRepositoryInterface;
+import org.glifery.smarthome.application.service.PortManager;
 import org.glifery.smarthome.domain.event.aggregate.AllFromDateAggregate;
 import org.glifery.smarthome.domain.event.aggregate.PortStateAggregate;
 import org.glifery.smarthome.domain.event.aggregate.PortStatesAggregate;
 import org.glifery.smarthome.domain.model.event.AbstractEvent;
-import org.glifery.smarthome.domain.model.event.ActionEvent;
 import org.glifery.smarthome.domain.model.megad.MegaD;
 import org.glifery.smarthome.domain.model.megad.Port;
 import org.glifery.smarthome.domain.model.megad.PortState;
@@ -32,7 +31,7 @@ public class ApiController {
     private final ControllerRepositoryInterface controllerRepository;
     private final PortRepositoryInterface portRepository;
     private final EventSourceInterface eventSource;
-    private final EventStoreInterface eventStore;
+    private final PortManager portManager;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -98,6 +97,6 @@ public class ApiController {
         MegaD megaD = controllerRepository.findMegaD(postActionEventRequest.getMegaD());
         Port port = portRepository.findPort(megaD, postActionEventRequest.getPort());
 
-        eventStore.publish(new ActionEvent(new SingleAction(port, postActionEventRequest.getAction()), LocalDateTime.now()));
+        portManager.applyAction(new SingleAction(port, postActionEventRequest.getAction()), LocalDateTime.now());
     }
 }

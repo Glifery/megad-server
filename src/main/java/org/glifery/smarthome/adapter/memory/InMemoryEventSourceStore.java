@@ -23,7 +23,7 @@ public class InMemoryEventSourceStore implements EventSourceInterface, EventStor
 
     @Override
     public void publish(AbstractEvent abstractEvent) {
-        log.info(String.format("Publishing event: %s", abstractEvent.getName()));
+        log.info(String.format("Publish %s event '%s'", abstractEvent.getClass().getSimpleName(), abstractEvent.getName()));
 
         events.add(abstractEvent);
 
