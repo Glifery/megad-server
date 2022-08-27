@@ -28,11 +28,11 @@ public class PortManager {
     }
 
     public void applyPortState(PortState portState) {
-        SingleAction.Action action = SingleAction.Action.OFF;
+        SingleAction.Action action;
 
         switch (portState.getState()) {
-            case OFF: action = SingleAction.Action.OFF; break;
             case ON: action = SingleAction.Action.ON; break;
+            default: action = SingleAction.Action.OFF; break;
         }
 
         SingleAction singleAction = new SingleAction(portState.getPort(), action);
