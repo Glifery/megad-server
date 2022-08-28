@@ -7,7 +7,8 @@ class EventList extends React.Component{
         super(props);
         this.state = {
             events: [],
-            latestEventDate: null
+            latestEventDate: null,
+            progress: 'done'
         };
     }
 
@@ -16,19 +17,37 @@ class EventList extends React.Component{
     }
 
     updateEvents() {
+        this.setState({progress: 'loading'});
+
         let params = this.state.latestEventDate ? {start_date: this.state.latestEventDate} : null;
 
         client({method: 'GET', path: '/api/events', params: params})
-            .done(response => {
+            .then(response => {
                 response.entity.forEach(event => {
                     this.state.events.unshift(event);
                 })
 
                 this.setState({
                     events: this.state.events,
-                    latestEventDate: response.entity.length ? response.entity[response.entity.length - 1].create_date_time : this.state.latestEventDate
+                    latestEventDate: response.entity.length ? response.entity[response.entity.length - 1].create_date_time : this.state.latestEventDate,
+                    progress: 'done'
+                });
+            }).catch(() => {
+                this.setState({
+                    progress: 'error'
                 });
             });
+    }
+
+    renderReloadIcon(param) {
+        switch(this.state.progress) {
+            case 'progress':
+                return <i className="fa-solid fa-rotate"></i>;
+            case 'done':
+                return <i class="fa-solid fa-check"></i>;
+            default:
+                return <i class="fa-solid fa-triangle-exclamation"></i>;
+        }
     }
 
     render() {
@@ -39,14 +58,20 @@ class EventList extends React.Component{
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-sm">
-                        <button className="btn btn-primary data-table-clear" onClick={() => {
-                            this.setState({
-                                events: [],
-                                latestEventDate: this.state.latestEventDate
-                            });
-                        }}>Очистить</button>
+                        <div className="btn-group" role="group">
+                            <button className="btn btn-danger" onClick={() => {
+                                this.setState({
+                                    events: [],
+                                    latestEventDate: this.state.latestEventDate
+                                });
+                            }}>Clear</button>
+                            <button type="button" className="btn btn-primary" disabled>
+                                Reloading {this.renderReloadIcon()}
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <br/>
                 <table className="table table-sm table-bordered">
                     <thead>
                         <tr>
