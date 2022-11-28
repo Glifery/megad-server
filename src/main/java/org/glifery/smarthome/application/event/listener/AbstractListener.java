@@ -12,6 +12,8 @@ public abstract class AbstractListener {
     }
 
     public abstract String getListenerDescription();
+    public abstract boolean getEnable();
+    public abstract void setEnable(boolean enable);
 
     protected void handleLog(AbstractEvent event) {
         log.info(String.format(

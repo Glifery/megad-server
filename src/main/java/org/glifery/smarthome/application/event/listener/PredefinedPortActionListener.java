@@ -6,6 +6,7 @@ import org.glifery.smarthome.adapter.memory.PortActionsRepository;
 import org.glifery.smarthome.application.service.PortManager;
 import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionsList;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +22,30 @@ public class PredefinedPortActionListener extends AbstractListener {
     private final PortActionsRepository portActionsRepository;
     private final PortManager portManager;
 
+    @Value("${application.listeners.PredefinedPortActionListener.enabled}")
+    private boolean enabled;
+
     @Override
     public String getListenerDescription() {
         return "This handler runs predefined (default) MegaD behavior for given port";
     }
 
+    @Override
+    public boolean getEnable() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnable(boolean enable) {
+        enabled = enable;
+    }
+
     @EventListener
     public void handleClickEvent(ClickEvent event) {
+        if (!getEnable()) {
+            return;
+        }
+
         if (!event.getName().contains(ClickEvent.Type.CLICK_FIRST.toString())) {
             return;
         }

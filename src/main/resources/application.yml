@@ -18,6 +18,15 @@ application:
   hold_click_milliseconds: 1000
   autoupdate_port_state_disabled: false
   autoupdate_port_state_seconds: 10
+  listeners:
+    IncomingRequestListener:
+      enabled: true
+    LogClickEventActionListener:
+      enabled: false
+    PredefinedPortActionListener:
+      enabled: true
+    MegadCommandListener:
+      enabled: true
 
 spreadsheet:
   credentials_json: "/google-sheets-client-secret.json"

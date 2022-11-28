@@ -8,6 +8,7 @@ import org.glifery.smarthome.domain.model.event.ActionIncomingRequestEvent;
 import org.glifery.smarthome.domain.model.event.ClickEvent;
 import org.glifery.smarthome.domain.model.megad.ActionIncomingRequest;
 import org.glifery.smarthome.domain.model.megad.Port;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,9 @@ public class IncomingRequestListener extends AbstractPublishingListener {
     private final ApplicationConfig config;
     private final EventSourceInterface eventSource;
 
+    @Value("${application.listeners.IncomingRequestListener.enabled}")
+    private boolean enabled;
+
     public IncomingRequestListener(ApplicationConfig config, EventStoreInterface eventStore, EventSourceInterface eventSource) {
         super(eventStore);
         this.config = config;
@@ -41,8 +45,22 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         return "This handler converts standard PRESS event to various CLICK events";
     }
 
+    @Override
+    public boolean getEnable() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnable(boolean enable) {
+        enabled = enable;
+    }
+
     @EventListener
     public void checkBaseClicks(ActionIncomingRequestEvent event) {
+        if (!getEnable()) {
+            return;
+        }
+
         if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {
             return;
         }
@@ -65,6 +83,10 @@ public class IncomingRequestListener extends AbstractPublishingListener {
 
     @EventListener
     public void checkUnclick(ActionIncomingRequestEvent event) {
+        if (!getEnable()) {
+            return;
+        }
+
         if (event.getRequest().getMode() != ActionIncomingRequest.Mode.RELEASE) {
             return;
         }
@@ -76,6 +98,10 @@ public class IncomingRequestListener extends AbstractPublishingListener {
 
     @EventListener
     public void checkSingleClick(ClickEvent event) throws InterruptedException {
+        if (!getEnable()) {
+            return;
+        }
+
         if (!event.getName().contains(ClickEvent.Type.CLICK_FIRST.toString())) {
             return;
         }
@@ -98,6 +124,10 @@ public class IncomingRequestListener extends AbstractPublishingListener {
 
     @EventListener
     public void checkHoldClick(ActionIncomingRequestEvent event) throws InterruptedException {
+        if (!getEnable()) {
+            return;
+        }
+
         if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {
             return;
         }
