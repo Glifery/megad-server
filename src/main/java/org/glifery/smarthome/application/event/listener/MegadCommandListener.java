@@ -14,6 +14,11 @@ import org.springframework.stereotype.Component;
 public class MegadCommandListener extends AbstractListener {
     private final MegadService megadService;
 
+    @Override
+    public String getListenerDescription() {
+        return "This handler sends request to MegaD controller";
+    }
+
     @EventListener
     public void handleActionEvent(PortStateActionChangeEvent portStateChangeActionEvent) {
         handleLog(portStateChangeActionEvent);

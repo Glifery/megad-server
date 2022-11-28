@@ -7,12 +7,10 @@ import org.glifery.smarthome.domain.model.event.AbstractEvent;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AbstractPublishingListener extends AbstractListener {
-    protected final EventStoreInterface eventRepository;
+public abstract class AbstractPublishingListener extends AbstractListener {
+    protected final EventStoreInterface eventStore;
 
     protected void publishAndLog(AbstractEvent event) {
-        log.info(String.format("Publish %s event (%s)", event.getName(), event.getEventDateTime()));
-
-        eventRepository.publish(event);
+        eventStore.publish(this.getListenerName(), event);
     }
 }

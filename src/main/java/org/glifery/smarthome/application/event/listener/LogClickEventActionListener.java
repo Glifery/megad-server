@@ -7,6 +7,16 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class LogClickEventActionListener extends AbstractListener {
+    @Override
+    public String getListenerName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getListenerDescription() {
+        return "This handler just logs CLICK events with WARN log level. Disabled by default";
+    }
+
 //    @EventListener
     public void handleClickEvent(ClickEvent event) {
         log.warn(String.format("Log %s event (%s)", event.getName(), event.getEventDateTime()));

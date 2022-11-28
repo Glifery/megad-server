@@ -6,7 +6,7 @@ logging:
           adapter: INFO
           application:
             event:
-              listener: WARN
+              listener: INFO
       springframework:
         web:
           filter:

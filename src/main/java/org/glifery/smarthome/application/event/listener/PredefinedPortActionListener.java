@@ -21,6 +21,11 @@ public class PredefinedPortActionListener extends AbstractListener {
     private final PortActionsRepository portActionsRepository;
     private final PortManager portManager;
 
+    @Override
+    public String getListenerDescription() {
+        return "This handler runs predefined (default) MegaD behavior for given port";
+    }
+
     @EventListener
     public void handleClickEvent(ClickEvent event) {
         if (!event.getName().contains(ClickEvent.Type.CLICK_FIRST.toString())) {
@@ -36,6 +41,6 @@ public class PredefinedPortActionListener extends AbstractListener {
         }
 
         predefinedActionsList.getSingleActions().stream()
-                .forEach(singleAction -> portManager.applyAction(singleAction, event.getEventDateTime()));
+                .forEach(singleAction -> portManager.applyAction(this.getClass().getSimpleName(), singleAction, event.getEventDateTime()));
     }
 }

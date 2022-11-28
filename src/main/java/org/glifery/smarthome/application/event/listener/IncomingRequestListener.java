@@ -36,6 +36,11 @@ public class IncomingRequestListener extends AbstractPublishingListener {
         this.eventSource = eventSource;
     }
 
+    @Override
+    public String getListenerDescription() {
+        return "This handler converts standard PRESS event to various CLICK events";
+    }
+
     @EventListener
     public void checkBaseClicks(ActionIncomingRequestEvent event) {
         if (event.getRequest().getMode() != ActionIncomingRequest.Mode.PRESS) {

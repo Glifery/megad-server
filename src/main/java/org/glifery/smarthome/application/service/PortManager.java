@@ -37,17 +37,17 @@ public class PortManager {
         }
 
         PortStateActionEvent portStateActionEvent = new PortStateActionEvent(actualizedSingleAction, LocalDateTime.now());
-        eventStore.publish(portStateActionEvent);
+        eventStore.publish(String.format("%s::syncPortState", this.getClass().getSimpleName()), portStateActionEvent);
     }
 
-    public void applyAction(SingleAction singleAction, LocalDateTime dateTime) {
+    public void applyAction(String actionProducerName, SingleAction singleAction, LocalDateTime dateTime) {
         SingleAction actualizedSingleAction = actualizeSingleAction(singleAction);
         if (Objects.isNull(actualizedSingleAction)) {
             return;
         }
 
         PortStateActionChangeEvent portStateChangeActionEvent = new PortStateActionChangeEvent(actualizedSingleAction, dateTime);
-        eventStore.publish(portStateChangeActionEvent);
+        eventStore.publish(actionProducerName, portStateChangeActionEvent);
     }
 
     private SingleAction actualizeSingleAction(SingleAction singleAction) {

@@ -74,7 +74,7 @@ public class MegadController {
     }
 
     private String publishRequest(ActionIncomingRequest incomingRequest) {
-        eventRepository.publish(new ActionIncomingRequestEvent(incomingRequest));
+        eventRepository.publish(this.getClass().getSimpleName(), new ActionIncomingRequestEvent(incomingRequest));
 
         return empty;
     }

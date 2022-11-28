@@ -97,6 +97,6 @@ public class ApiController {
         MegaD megaD = controllerRepository.findMegaD(postActionEventRequest.getMegaD());
         Port port = portRepository.findPort(megaD, postActionEventRequest.getPort());
 
-        portManager.applyAction(new SingleAction(port, postActionEventRequest.getAction()), LocalDateTime.now());
+        portManager.applyAction(this.getClass().getSimpleName(), new SingleAction(port, postActionEventRequest.getAction()), LocalDateTime.now());
     }
 }

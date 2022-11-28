@@ -22,6 +22,8 @@ public class MegadService {
     private final PortManager portManager;
 
     public void updateAllStates() {
+        log.info("Refreshing all MegaD states");
+
         controllerRepository.findAllMegaDs().stream()
                 .flatMap(megaD -> {
                     try {
@@ -33,8 +35,6 @@ public class MegadService {
                     return Stream.empty();
                 })
                 .forEach(portManager::syncPortState);
-
-        log.info("All states have been refreshed");
     }
 
     public void sendCommand(ActionsList actionsList) {
